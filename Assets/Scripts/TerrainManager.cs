@@ -4,6 +4,7 @@ using System.Linq;
 
 enum Direction { LEFT, RIGHT, UP, DOWN }
 enum Tile { VOID, HORIZONTAL, VERTICAL, LEFT_UP, LEFT_DOWN, RIGHT_UP, RIGHT_DOWN, CROSS }
+enum Height { VOID = -2, DOWN1 = -1, NORMAL = 0, UP1 = 1, UP2 = 2 }
 
 public class TerrainManager : MonoBehaviour
 {
@@ -27,18 +28,36 @@ public class TerrainManager : MonoBehaviour
         { (Tile.CROSS, Direction.DOWN),         new List<(Tile, int)>{ (Tile.VERTICAL, 100) } },
     };
 
+    Dictionary<Height, List<(Height, int)>> heightProbabilities = new Dictionary<Height, List<(Height, int)>>()
+    {
+        { Height.NORMAL,    new List<(Height, int)> { (Height.NORMAL, 70), (Height.UP1, 18), (Height.UP2, 2), (Height.DOWN1, 10) } },
+        { Height.UP1,       new List<(Height, int)> { (Height.NORMAL, 70), (Height.UP1, 20), (Height.DOWN1, 10) } },
+        { Height.UP2,       new List<(Height, int)> { (Height.NORMAL, 70), (Height.UP2, 20), (Height.DOWN1, 10) } },
+        { Height.DOWN1,     new List<(Height, int)> { (Height.NORMAL, 100) } },
+    };
+
+    [SerializeField] GameObject playerPrefab;
+
     [SerializeField] GameObject[] tilePrefabs;
     Dictionary<Tile, GameObject> tilePrefabMap = new Dictionary<Tile, GameObject>();
 
+    [SerializeField] GameObject player;
+    GameObject path;
+
     const int ROWS = 8;
-    const int COLS = 15;
+    const int COLS = 24;
 
     int currTileX;
     int currTileY;
+    int marginTiles;
+
+    List<(int x, int y)> pathHistory = new List<(int, int)>();
 
     Tile[,] map = new Tile[ROWS, COLS];
+    Height[,] topography = new Height[ROWS, COLS];
     Direction direction;
     Tile prevTile;
+    Height prevHeight;
 
     void Start()
     {
@@ -50,29 +69,44 @@ public class TerrainManager : MonoBehaviour
         tilePrefabMap[Tile.RIGHT_DOWN] = tilePrefabs[5];
         tilePrefabMap[Tile.CROSS] = tilePrefabs[6];
 
-        CreateMap();
-        InstantiatePlayer();
+        path = new GameObject("Path");
+        path.transform.position = new Vector3(0, 0.25f, 0);
+
+        GenerateLevel();
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.N))
         {
-            CreateMap();
-            InstantiatePlayer();
+            GenerateLevel();
         }
+    }
+
+    public void GenerateLevel()
+    {
+        CreateMap();
+        GenerateTopography();
+        GenerateTerrain();
+        InstantiatePlayer();
     }
 
     void CreateMap()
 	{
         bool isValidMap = false;
 
+        DestroyPlayer();
+
         while (!isValidMap) {
             try
             {
+                ClearPathPoints(); //Cambiar de sitio
+                pathHistory.Clear();
+
                 map = new Tile[ROWS, COLS];
                 currTileX = 0;
                 currTileY = ROWS - 3;
+                marginTiles = 5;
 
                 for (int i = 0; i < ROWS; ++i)
                 {
@@ -80,9 +114,8 @@ public class TerrainManager : MonoBehaviour
                 }
 
                 direction = Direction.RIGHT;
-                map[currTileY, currTileX] = Tile.HORIZONTAL;
-                prevTile = Tile.HORIZONTAL;
-                currTileX++;
+
+                for (int i = 0; i < marginTiles; ++i) PlaceTile(Tile.HORIZONTAL);
 
                 while (IsWithinBounds(currTileX, currTileY))
                 {
@@ -90,11 +123,13 @@ public class TerrainManager : MonoBehaviour
                     PlaceTile(nextTile);
                 }
 
-                if (currTileX != COLS) throw new System.Exception("Path doesn't end correctly");
+                if (currTileX != COLS - marginTiles) throw new System.Exception("Path doesn't end correctly");
 
                 isValidMap = true;
 
-                GenerateTerrain();
+                for (int i = 0; i < marginTiles; ++i) PlaceTile(Tile.HORIZONTAL);
+
+                CreatePathPoint(currTileX-1, currTileY);
             }
             catch (System.Exception e)
 			{
@@ -127,7 +162,7 @@ public class TerrainManager : MonoBehaviour
             cumulative += chance;
             if (random < cumulative) return tile;
         }
-        return Tile.VOID;
+        return Tile.VOID; //ERROR
     }
 
     Direction GetDirectionAfterTile(Direction currentDirection, Tile tile)
@@ -158,6 +193,10 @@ public class TerrainManager : MonoBehaviour
             map[currTileY, currTileX] = tile;
         }
 
+        pathHistory.Add((currTileX, currTileY));
+
+        if (IsCornerTile(tile)) CreatePathPoint(currTileX, currTileY);
+
         prevTile = tile;
 
         direction = GetDirectionAfterTile(direction, tile);
@@ -171,9 +210,61 @@ public class TerrainManager : MonoBehaviour
         }
     }
 
+    void CreatePathPoint(int x, int y)
+    {
+        GameObject point = new GameObject("Point");
+        point.transform.SetParent(path.transform);
+        point.transform.localPosition = new Vector3(y, 0, x);
+    }
+
+    void GenerateTopography()
+    {
+        foreach (var (x, y) in pathHistory)
+        {
+            if (map[y, x] == Tile.HORIZONTAL || map[y, x] == Tile.VERTICAL)
+            {
+                if (!IsWithinBounds(x, y)) {
+                    topography[y, x] = Height.NORMAL;
+                    prevHeight = Height.NORMAL;
+                }
+                else 
+                {
+                    Height nextHeight = GetNextHeight(prevHeight);
+                    topography[y, x] = nextHeight;
+                    prevHeight = nextHeight;
+                }
+            }
+            else if (map[y, x] != Tile.VOID)
+            {
+                topography[y, x] = Height.NORMAL;
+                prevHeight = Height.NORMAL;
+            }
+        }
+    }
+
+    Height GetNextHeight(Height currentHeight)
+    {
+        List<(Height, int)> validHeights = heightProbabilities[currentHeight];
+        int totalProbability = validHeights.Sum(p => p.Item2);
+
+        int randomValue = Random.Range(0, totalProbability);
+        int cumulative = 0;
+
+        foreach (var (nextHeight, chance) in validHeights)
+        {
+            cumulative += chance;
+            if (randomValue < cumulative)
+            {
+                return nextHeight;
+            }
+        }
+
+        return Height.NORMAL;
+    }
+
     void GenerateTerrain()
 	{
-        DestroyChildren();
+        DestroyTerrain();
 
         for (int i = 0; i < ROWS; ++i)
         {
@@ -181,7 +272,10 @@ public class TerrainManager : MonoBehaviour
             {
                 if (map[i, j] != Tile.VOID && tilePrefabMap.ContainsKey(map[i, j]))
                 {
-                    Instantiate(tilePrefabMap[map[i, j]], new Vector3(i, 0, j), Quaternion.identity, this.transform);
+                    float height = (float)topography[i, j] / 2;
+
+                    GameObject newTile = Instantiate(tilePrefabMap[map[i, j]], new Vector3(i, height - 0.25f, j), Quaternion.identity, this.transform);
+                    newTile.gameObject.tag = "Ground";
                 }
             }
         }
@@ -201,7 +295,7 @@ public class TerrainManager : MonoBehaviour
         Debug.Log("------------------------------------------------------");
     }
 
-    void DestroyChildren()
+    void DestroyTerrain()
     {
         for (int i = 0; i < transform.childCount; ++i)
         {
@@ -209,9 +303,27 @@ public class TerrainManager : MonoBehaviour
         }
     }
 
+    void ClearPathPoints()
+    {
+        for (int i = 0; i < path.transform.childCount; ++i)
+        {
+            Destroy(path.transform.GetChild(i).gameObject);
+        }
+    }
+
+    void DestroyPlayer()
+    {
+        if (player != null) Destroy(player.gameObject);
+    }
+
     bool IsWithinBounds(int x, int y)
     { 
-        return (x >= 0 && x < COLS && y >= 0 && y < ROWS);
+        return (x >= 0 + marginTiles && x < COLS - marginTiles && y >= 0 && y < ROWS);
+    }
+
+    bool IsCornerTile(Tile tile)
+    {
+        return tile == Tile.LEFT_UP || tile == Tile.LEFT_DOWN || tile == Tile.RIGHT_UP || tile == Tile.RIGHT_DOWN;
     }
 
     bool CanPlaceTile(Direction direction)
@@ -242,8 +354,10 @@ public class TerrainManager : MonoBehaviour
 
     void InstantiatePlayer()
 	{
-        // Instantiate
-        // Pass points
-        // Activate movement
+        player = Instantiate(playerPrefab, new Vector3(ROWS-3, 0.25f, 0), Quaternion.identity);
+
+        PlayerController playerController = player.GetComponent<PlayerController>();
+        playerController.path = path.transform;
+        playerController.terrainManager = this;
 	}
 }

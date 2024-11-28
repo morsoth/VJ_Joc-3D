@@ -252,7 +252,7 @@ GameObject:
   - component: {fileID: 1016054106}
   m_Layer: 0
   m_Name: TerrainGenerator
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -269,6 +269,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac8a7e000f05a704b81ffb5d047ca2ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerPrefab: {fileID: 6322304915184393890, guid: dea1aa1a1c227572b869d11c3880ee16, type: 3}
   tilePrefabs:
   - {fileID: 7423959064925592794, guid: 4e779170a4d7508428fd26df275d0b8d, type: 3}
   - {fileID: 6082791988345723807, guid: 7ba985b29f9ade04e91f1471294b4919, type: 3}
@@ -277,6 +278,7 @@ MonoBehaviour:
   - {fileID: 393000569182324341, guid: d20f6b71f74a8dc4ba03f849bdb03316, type: 3}
   - {fileID: 2243960080240065295, guid: da5ba3368638e9047829fcd3634be896, type: 3}
   - {fileID: 6758664945965437075, guid: 188eb4374533e9946afb7ad8ac8113f9, type: 3}
+  player: {fileID: 0}
 --- !u!4 &1016054107
 Transform:
   m_ObjectHideFlags: 0
@@ -354,7 +356,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 6
+  orthographic size: 5
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -379,7 +381,7 @@ Transform:
   m_GameObject: {fileID: 2033674979}
   serializedVersion: 2
   m_LocalRotation: {x: 0.105271205, y: -0.8824172, z: 0.23644301, w: 0.39287743}
-  m_LocalPosition: {x: 9.6, y: 6.4, z: 13.87}
+  m_LocalPosition: {x: 12.23, y: 8.1, z: 20}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

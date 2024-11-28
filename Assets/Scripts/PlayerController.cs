@@ -5,7 +5,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float moveSpeed = 1.0f;
     [SerializeField] float jumpForce = 1.0f;
     [SerializeField] float gravity = 9.8f;
+
     public Transform path;
+    public TerrainManager terrainManager;
+
     int index = 0;
     Rigidbody rb;
     bool isGrounded = true;
@@ -13,14 +16,14 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         rb = gameObject.GetComponent<Rigidbody>();
-        path = GameObject.Find("Path").transform;
+        //path = GameObject.Find("Path").transform;
 
         rb.useGravity = false;
     }
 
     void FixedUpdate()
     {
-        if (index > path.childCount - 1) index = 0;
+        if (index > path.childCount - 1)  terrainManager.GenerateLevel();
 
         Transform point = path.GetChild(index);
 
@@ -32,7 +35,7 @@ public class PlayerController : MonoBehaviour
 
         if (GetDistanceToPointXZ(point) < 0.001f) index++;
 
-        if (!isGrounded) rb.AddForce(Vector3.down * gravity, ForceMode.Acceleration);
+        rb.AddForce(Vector3.down * gravity, ForceMode.Acceleration);
     }
 
     void Update()
@@ -46,7 +49,7 @@ public class PlayerController : MonoBehaviour
         rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         isGrounded = false;
     }
-
+    // Si cae de un tile elevado puede saltar sin tocar el suelo!!
     void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Ground")) isGrounded = true;

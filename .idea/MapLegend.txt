@@ -1,0 +1,12 @@
+0 -> Tile.VOID
+1 -> Tile.HORIZONTAL
+2 -> Tile.VERTICAL
+3 -> Tile.LEFT_UP
+4 -> Tile.LEFT_DOWN
+5 -> Tile.RIGHT_UP
+6 -> Tile.RIGHT_DOWN
+7 -> Tile.CROSS
+
+
+0 -> VOID
+1 -> 
