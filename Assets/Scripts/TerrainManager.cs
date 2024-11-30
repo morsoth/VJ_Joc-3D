@@ -59,6 +59,9 @@ public class TerrainManager : MonoBehaviour
     Tile prevTile;
     Height prevHeight;
 
+    int distanceLastHeight;
+    [SerializeField] int minDistanceBetweenHeights = 0;
+
     void Start()
     {
         tilePrefabMap[Tile.HORIZONTAL] = tilePrefabs[0];
@@ -219,32 +222,54 @@ public class TerrainManager : MonoBehaviour
 
     void GenerateTopography()
     {
+        distanceLastHeight = 0;
+
         foreach (var (x, y) in pathHistory)
         {
+            Height nextHeight = Height.NORMAL;
+
             if (map[y, x] == Tile.HORIZONTAL || map[y, x] == Tile.VERTICAL)
             {
                 if (!IsWithinBounds(x, y)) {
-                    topography[y, x] = Height.NORMAL;
-                    prevHeight = Height.NORMAL;
+                    nextHeight = Height.NORMAL;
                 }
                 else 
                 {
-                    Height nextHeight = GetNextHeight(prevHeight);
-                    topography[y, x] = nextHeight;
-                    prevHeight = nextHeight;
+                    nextHeight = GetNextHeight(prevHeight, distanceLastHeight < minDistanceBetweenHeights);
                 }
             }
             else if (map[y, x] != Tile.VOID)
             {
-                topography[y, x] = Height.NORMAL;
-                prevHeight = Height.NORMAL;
+                nextHeight = Height.NORMAL;
             }
+
+            if (nextHeight != prevHeight) distanceLastHeight = 0;
+            else distanceLastHeight++;
+
+            topography[y, x] = nextHeight;
+            prevHeight = nextHeight;
         }
     }
 
-    Height GetNextHeight(Height currentHeight)
+    Height GetNextHeight(Height currentHeight, bool enforceStability)
     {
         List<(Height, int)> validHeights = heightProbabilities[currentHeight];
+
+        if (enforceStability)
+        {
+            for (int i = 0; i < validHeights.Count; ++i)
+            {
+                if (validHeights[i].Item1 == currentHeight)
+                {
+                    validHeights[i] = (validHeights[i].Item1, validHeights[i].Item2 + 50);
+                }
+                else
+                {
+                    validHeights[i] = (validHeights[i].Item1, validHeights[i].Item2 / 2);
+                }
+            }
+        }
+
         int totalProbability = validHeights.Sum(p => p.Item2);
 
         int randomValue = Random.Range(0, totalProbability);
