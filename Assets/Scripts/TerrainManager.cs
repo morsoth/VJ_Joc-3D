@@ -41,15 +41,19 @@ public class TerrainManager : MonoBehaviour
     [SerializeField] GameObject[] tilePrefabs;
     Dictionary<Tile, GameObject> tilePrefabMap = new Dictionary<Tile, GameObject>();
 
-    [SerializeField] GameObject player;
+    GameObject player;
     GameObject path;
 
     const int ROWS = 8;
-    const int COLS = 24;
+    const int COLS = 20;
+
+    int marginTiles = 4;
 
     int currTileX;
     int currTileY;
-    int marginTiles;
+
+    int numTiles;
+    [SerializeField] int maxNumTiles = 35;
 
     List<(int x, int y)> pathHistory = new List<(int, int)>();
 
@@ -74,6 +78,8 @@ public class TerrainManager : MonoBehaviour
 
         path = new GameObject("Path");
         path.transform.position = new Vector3(0, 0.25f, 0);
+
+        if (maxNumTiles < 20) maxNumTiles = 20;
 
         GenerateLevel();
     }
@@ -109,7 +115,8 @@ public class TerrainManager : MonoBehaviour
                 map = new Tile[ROWS, COLS];
                 currTileX = 0;
                 currTileY = ROWS - 3;
-                marginTiles = 5;
+
+                numTiles = 0;
 
                 for (int i = 0; i < ROWS; ++i)
                 {
@@ -128,11 +135,11 @@ public class TerrainManager : MonoBehaviour
 
                 if (currTileX != COLS - marginTiles) throw new System.Exception("Path doesn't end correctly");
 
-                isValidMap = true;
-
                 for (int i = 0; i < marginTiles; ++i) PlaceTile(Tile.HORIZONTAL);
 
                 CreatePathPoint(currTileX-1, currTileY);
+
+                isValidMap = true;
             }
             catch (System.Exception e)
 			{
@@ -187,6 +194,9 @@ public class TerrainManager : MonoBehaviour
 
     void PlaceTile(Tile tile)
 	{
+        ++numTiles;
+        if (numTiles > maxNumTiles) throw new System.Exception("Limit of tiles exceeded");
+
         if ((map[currTileY, currTileX] == Tile.HORIZONTAL && tile == Tile.VERTICAL) || (map[currTileY, currTileX] == Tile.VERTICAL && tile == Tile.HORIZONTAL))
         {
             map[currTileY, currTileX] = Tile.CROSS;
@@ -223,6 +233,7 @@ public class TerrainManager : MonoBehaviour
     void GenerateTopography()
     {
         distanceLastHeight = 0;
+        prevHeight = Height.NORMAL;
 
         foreach (var (x, y) in pathHistory)
         {
@@ -253,7 +264,7 @@ public class TerrainManager : MonoBehaviour
 
     Height GetNextHeight(Height currentHeight, bool enforceStability)
     {
-        List<(Height, int)> validHeights = heightProbabilities[currentHeight];
+        List<(Height, int)> validHeights = new List<(Height, int)>(heightProbabilities[currentHeight]);
 
         if (enforceStability)
         {
@@ -304,20 +315,6 @@ public class TerrainManager : MonoBehaviour
                 }
             }
         }
-    }
-
-    void PrintMap()
-	{
-        for (int i = 0; i < ROWS; ++i)
-        {
-            string fila = "";
-            for (int j = 0; j < COLS; ++j)
-            {
-                fila += (int)map[i, j] + "\t";
-            }
-            Debug.Log(fila);
-        }
-        Debug.Log("------------------------------------------------------");
     }
 
     void DestroyTerrain()
@@ -379,10 +376,24 @@ public class TerrainManager : MonoBehaviour
 
     void InstantiatePlayer()
 	{
-        player = Instantiate(playerPrefab, new Vector3(ROWS-3, 0.25f, 0), Quaternion.identity);
+        player = Instantiate(playerPrefab, new Vector3(ROWS-3, 0.5f, 0), Quaternion.identity);
 
         PlayerController playerController = player.GetComponent<PlayerController>();
         playerController.path = path.transform;
         playerController.terrainManager = this;
 	}
+
+    void PrintMap()
+    {
+        for (int i = 0; i < ROWS; ++i)
+        {
+            string fila = "";
+            for (int j = 0; j < COLS; ++j)
+            {
+                fila += (int)map[i, j] + "\t";
+            }
+            Debug.Log(fila);
+        }
+        Debug.Log("------------------------------------------------------");
+    }
 }
