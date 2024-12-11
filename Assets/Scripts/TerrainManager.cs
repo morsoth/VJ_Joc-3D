@@ -2,43 +2,11 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
-enum Direction { LEFT, RIGHT, UP, DOWN }
-enum Tile { VOID, HORIZONTAL, VERTICAL, LEFT_UP, LEFT_DOWN, RIGHT_UP, RIGHT_DOWN, CROSS }
-enum Height { VOID = -2, DOWN1 = -1, NORMAL = 0, UP1 = 1, UP2 = 2 }
-
 public class TerrainManager : MonoBehaviour
 {
-    Dictionary<(Tile, Direction), List<(Tile, int)>> probabilities = new Dictionary<(Tile, Direction), List<(Tile, int)>>()
-    {
-        { (Tile.HORIZONTAL, Direction.LEFT),    new List<(Tile, int)>{ (Tile.HORIZONTAL, 30), (Tile.RIGHT_UP, 35), (Tile.RIGHT_DOWN, 35) } },
-        { (Tile.HORIZONTAL, Direction.RIGHT),   new List<(Tile, int)>{ (Tile.HORIZONTAL, 70), (Tile.LEFT_UP, 15), (Tile.LEFT_DOWN, 15) } },
-        { (Tile.VERTICAL, Direction.UP),        new List<(Tile, int)>{ (Tile.VERTICAL, 40), (Tile.LEFT_DOWN, 20), (Tile.RIGHT_DOWN, 40) } },
-        { (Tile.VERTICAL, Direction.DOWN),      new List<(Tile, int)>{ (Tile.VERTICAL, 40), (Tile.LEFT_UP, 20), (Tile.RIGHT_UP, 40) } },
-        { (Tile.LEFT_UP, Direction.LEFT),       new List<(Tile, int)>{ (Tile.HORIZONTAL, 100) } },
-        { (Tile.LEFT_UP, Direction.UP),         new List<(Tile, int)>{ (Tile.VERTICAL, 100) } },
-        { (Tile.LEFT_DOWN, Direction.LEFT),     new List<(Tile, int)>{ (Tile.HORIZONTAL, 100) } },
-        { (Tile.LEFT_DOWN, Direction.DOWN),     new List<(Tile, int)>{ (Tile.VERTICAL, 100) } },
-        { (Tile.RIGHT_UP, Direction.RIGHT),     new List<(Tile, int)>{ (Tile.HORIZONTAL, 100) } },
-        { (Tile.RIGHT_UP, Direction.UP),        new List<(Tile, int)>{ (Tile.VERTICAL, 100) } },
-        { (Tile.RIGHT_DOWN, Direction.RIGHT),   new List<(Tile, int)>{ (Tile.HORIZONTAL, 100) } },
-        { (Tile.RIGHT_DOWN, Direction.DOWN),    new List<(Tile, int)>{ (Tile.VERTICAL, 100) } },
-        { (Tile.CROSS, Direction.LEFT),         new List<(Tile, int)>{ (Tile.HORIZONTAL, 100) } },
-        { (Tile.CROSS, Direction.RIGHT),        new List<(Tile, int)>{ (Tile.HORIZONTAL, 100) } },
-        { (Tile.CROSS, Direction.UP),           new List<(Tile, int)>{ (Tile.VERTICAL, 100) } },
-        { (Tile.CROSS, Direction.DOWN),         new List<(Tile, int)>{ (Tile.VERTICAL, 100) } },
-    };
+    [SerializeField] TerrainData terrainData;
 
-    Dictionary<Height, List<(Height, int)>> heightProbabilities = new Dictionary<Height, List<(Height, int)>>()
-    {
-        { Height.NORMAL,    new List<(Height, int)> { (Height.NORMAL, 70), (Height.UP1, 18), (Height.UP2, 2), (Height.DOWN1, 10) } },
-        { Height.UP1,       new List<(Height, int)> { (Height.NORMAL, 70), (Height.UP1, 20), (Height.DOWN1, 10) } },
-        { Height.UP2,       new List<(Height, int)> { (Height.NORMAL, 70), (Height.UP2, 20), (Height.DOWN1, 10) } },
-        { Height.DOWN1,     new List<(Height, int)> { (Height.NORMAL, 100) } },
-    };
-
-    [SerializeField] GameObject playerPrefab;
-
-    [SerializeField] GameObject[] tilePrefabs;
+    
     Dictionary<Tile, GameObject> tilePrefabMap = new Dictionary<Tile, GameObject>();
 
     GameObject player;
@@ -49,11 +17,14 @@ public class TerrainManager : MonoBehaviour
 
     int marginTiles = 4;
 
-    int currTileX;
-    int currTileY;
+    Vector2Int currentTile;
 
     int numTiles;
     [SerializeField] int maxNumTiles = 35;
+
+    int numObstacles;
+    [SerializeField] int minNumObstacles = 2;
+
 
     List<(int x, int y)> pathHistory = new List<(int, int)>();
 
@@ -63,23 +34,20 @@ public class TerrainManager : MonoBehaviour
     Tile prevTile;
     Height prevHeight;
 
-    int distanceLastHeight;
-    [SerializeField] int minDistanceBetweenHeights = 0;
-
     void Start()
     {
-        tilePrefabMap[Tile.HORIZONTAL] = tilePrefabs[0];
-        tilePrefabMap[Tile.VERTICAL] = tilePrefabs[1];
-        tilePrefabMap[Tile.LEFT_UP] = tilePrefabs[2];
-        tilePrefabMap[Tile.LEFT_DOWN] = tilePrefabs[3];
-        tilePrefabMap[Tile.RIGHT_UP] = tilePrefabs[4];
-        tilePrefabMap[Tile.RIGHT_DOWN] = tilePrefabs[5];
-        tilePrefabMap[Tile.CROSS] = tilePrefabs[6];
+        tilePrefabMap[Tile.HORIZONTAL] = terrainData.tilePrefabs[0];
+        tilePrefabMap[Tile.VERTICAL] = terrainData.tilePrefabs[1];
+        tilePrefabMap[Tile.LEFT_UP] = terrainData.tilePrefabs[2];
+        tilePrefabMap[Tile.LEFT_DOWN] = terrainData.tilePrefabs[3];
+        tilePrefabMap[Tile.RIGHT_UP] = terrainData.tilePrefabs[4];
+        tilePrefabMap[Tile.RIGHT_DOWN] = terrainData.tilePrefabs[5];
+        tilePrefabMap[Tile.CROSS] = terrainData.tilePrefabs[6];
 
         path = new GameObject("Path");
-        path.transform.position = new Vector3(0, 0.25f, 0);
+        path.transform.position = new Vector3(0, 0, 0);
 
-        if (maxNumTiles < 20) maxNumTiles = 20;
+        if (maxNumTiles < COLS) throw new System.Exception("Maximum number of tiles (maxNumTiles) is less than the map width");
 
         GenerateLevel();
     }
@@ -94,9 +62,12 @@ public class TerrainManager : MonoBehaviour
 
     public void GenerateLevel()
     {
+        DestroyPlayer();
+
         CreateMap();
         GenerateTopography();
         GenerateTerrain();
+
         InstantiatePlayer();
     }
 
@@ -104,17 +75,16 @@ public class TerrainManager : MonoBehaviour
 	{
         bool isValidMap = false;
 
-        DestroyPlayer();
-
-        while (!isValidMap) {
+        while (!isValidMap)
+        {
             try
             {
                 ClearPathPoints(); //Cambiar de sitio
                 pathHistory.Clear();
 
                 map = new Tile[ROWS, COLS];
-                currTileX = 0;
-                currTileY = ROWS - 3;
+                currentTile.x = 0;
+                currentTile.y = ROWS - 3;
 
                 numTiles = 0;
 
@@ -127,17 +97,17 @@ public class TerrainManager : MonoBehaviour
 
                 for (int i = 0; i < marginTiles; ++i) PlaceTile(Tile.HORIZONTAL);
 
-                while (IsWithinBounds(currTileX, currTileY))
+                while (IsWithinBounds(currentTile.x, currentTile.y))
                 {
                     Tile nextTile = GetRandomTile(prevTile, direction);
                     PlaceTile(nextTile);
                 }
 
-                if (currTileX != COLS - marginTiles) throw new System.Exception("Path doesn't end correctly");
+                if (currentTile.x != COLS - marginTiles) throw new System.Exception("Path doesn't end correctly");
 
                 for (int i = 0; i < marginTiles; ++i) PlaceTile(Tile.HORIZONTAL);
 
-                CreatePathPoint(currTileX-1, currTileY);
+                CreatePathPoint(currentTile.x-1, currentTile.y);
 
                 isValidMap = true;
             }
@@ -151,9 +121,9 @@ public class TerrainManager : MonoBehaviour
     Tile GetRandomTile(Tile currentTile, Direction direction)
     {
         var key = (currentTile, direction);
-        if (!probabilities.ContainsKey(key)) return Tile.VOID;
+        if (!terrainData.probabilities.ContainsKey(key)) return Tile.VOID;
 
-        List<(Tile, int)> validTiles = probabilities[key].Where(tileChance =>
+        List<(Tile, int)> validTiles = terrainData.probabilities[key].Where(tileChance =>
         {
             Tile tile = tileChance.Item1;
             Direction testDirection = GetDirectionAfterTile(direction, tile);
@@ -197,18 +167,18 @@ public class TerrainManager : MonoBehaviour
         ++numTiles;
         if (numTiles > maxNumTiles) throw new System.Exception("Limit of tiles exceeded");
 
-        if ((map[currTileY, currTileX] == Tile.HORIZONTAL && tile == Tile.VERTICAL) || (map[currTileY, currTileX] == Tile.VERTICAL && tile == Tile.HORIZONTAL))
+        if ((map[currentTile.y, currentTile.x] == Tile.HORIZONTAL && tile == Tile.VERTICAL) || (map[currentTile.y, currentTile.x] == Tile.VERTICAL && tile == Tile.HORIZONTAL))
         {
-            map[currTileY, currTileX] = Tile.CROSS;
+            map[currentTile.y, currentTile.x] = Tile.CROSS;
         }
-        else if (map[currTileY, currTileX] == Tile.VOID)
+        else if (map[currentTile.y, currentTile.x] == Tile.VOID)
         {
-            map[currTileY, currTileX] = tile;
+            map[currentTile.y, currentTile.x] = tile;
         }
 
-        pathHistory.Add((currTileX, currTileY));
+        pathHistory.Add((currentTile.x, currentTile.y));
 
-        if (IsCornerTile(tile)) CreatePathPoint(currTileX, currTileY);
+        if (IsCornerTile(tile)) CreatePathPoint(currentTile.x, currentTile.y);
 
         prevTile = tile;
 
@@ -216,10 +186,10 @@ public class TerrainManager : MonoBehaviour
 
         switch (direction)
         {
-            case Direction.LEFT: currTileX--; break;
-            case Direction.RIGHT: currTileX++; break;
-            case Direction.UP: currTileY--; break;
-            case Direction.DOWN: currTileY++; break;
+            case Direction.LEFT: currentTile.x--; break;
+            case Direction.RIGHT: currentTile.x++; break;
+            case Direction.UP: currentTile.y--; break;
+            case Direction.DOWN: currentTile.y++; break;
         }
     }
 
@@ -227,59 +197,59 @@ public class TerrainManager : MonoBehaviour
     {
         GameObject point = new GameObject("Point");
         point.transform.SetParent(path.transform);
-        point.transform.localPosition = new Vector3(y, 0, x);
+        point.transform.localPosition = new Vector3(y * terrainData.blockSize.x, 0, x * terrainData.blockSize.z);
     }
 
     void GenerateTopography()
     {
-        distanceLastHeight = 0;
-        prevHeight = Height.NORMAL;
+        bool isValidMap = false;
 
-        foreach (var (x, y) in pathHistory)
+        while (!isValidMap)
         {
-            Height nextHeight = Height.NORMAL;
-
-            if (map[y, x] == Tile.HORIZONTAL || map[y, x] == Tile.VERTICAL)
+            try
             {
-                if (!IsWithinBounds(x, y)) {
-                    nextHeight = Height.NORMAL;
-                }
-                else 
+                numObstacles = 0;
+                prevHeight = Height.NORMAL;
+
+                foreach (var (x, y) in pathHistory)
                 {
-                    nextHeight = GetNextHeight(prevHeight, distanceLastHeight < minDistanceBetweenHeights);
+                    Height nextHeight = Height.NORMAL;
+
+                    if (map[y, x] == Tile.HORIZONTAL || map[y, x] == Tile.VERTICAL)
+                    {
+                        if (!IsWithinBounds(x, y)) {
+                            nextHeight = Height.NORMAL;
+                        }
+                        else 
+                        {
+                            nextHeight = GetNextHeight(prevHeight);
+                        }
+                    }
+                    else if (map[y, x] != Tile.VOID)
+                    {
+                        nextHeight = Height.NORMAL;
+                    }
+
+                    if (nextHeight != Height.NORMAL) ++numObstacles;
+
+                    topography[y, x] = nextHeight;
+                    prevHeight = nextHeight;
                 }
-            }
-            else if (map[y, x] != Tile.VOID)
-            {
-                nextHeight = Height.NORMAL;
-            }
 
-            if (nextHeight != prevHeight) distanceLastHeight = 0;
-            else distanceLastHeight++;
+                if (numObstacles < minNumObstacles) throw new System.Exception("Path has too few obstacles");
 
-            topography[y, x] = nextHeight;
-            prevHeight = nextHeight;
+                isValidMap = true;
+            }
+            catch (System.Exception e)
+			{
+                Debug.Log("Exception: " + e.Message);
+            }
         }
     }
 
-    Height GetNextHeight(Height currentHeight, bool enforceStability)
+    Height GetNextHeight(Height currentHeight)
     {
-        List<(Height, int)> validHeights = new List<(Height, int)>(heightProbabilities[currentHeight]);
-
-        if (enforceStability)
-        {
-            for (int i = 0; i < validHeights.Count; ++i)
-            {
-                if (validHeights[i].Item1 == currentHeight)
-                {
-                    validHeights[i] = (validHeights[i].Item1, validHeights[i].Item2 + 50);
-                }
-                else
-                {
-                    validHeights[i] = (validHeights[i].Item1, validHeights[i].Item2 / 2);
-                }
-            }
-        }
+        List<(Height, int)> validHeights = new List<(Height, int)>(terrainData.heightProbabilities[currentHeight]);
 
         int totalProbability = validHeights.Sum(p => p.Item2);
 
@@ -310,7 +280,12 @@ public class TerrainManager : MonoBehaviour
                 {
                     float height = (float)topography[i, j] / 2;
 
-                    GameObject newTile = Instantiate(tilePrefabMap[map[i, j]], new Vector3(i, height - 0.25f, j), Quaternion.identity, this.transform);
+                    GameObject newTile = Instantiate(
+                            tilePrefabMap[map[i, j]],
+                            new Vector3(i * terrainData.blockSize.x, (height - (terrainData.blockSize.y / 4)) * terrainData.blockSize.y, j * terrainData.blockSize.z),
+                            Quaternion.identity,
+                            this.transform
+                        );
                     newTile.gameObject.tag = "Ground";
                 }
             }
@@ -350,7 +325,7 @@ public class TerrainManager : MonoBehaviour
 
     bool CanPlaceTile(Direction direction)
     {
-        int x = currTileX, y = currTileY;
+        int x = currentTile.x, y = currentTile.y;
 
         switch (direction)
         {
@@ -376,7 +351,7 @@ public class TerrainManager : MonoBehaviour
 
     void InstantiatePlayer()
 	{
-        player = Instantiate(playerPrefab, new Vector3(ROWS-3, 0.5f, 0), Quaternion.identity);
+        player = Instantiate(terrainData.playerPrefab, new Vector3((ROWS-3) * terrainData.blockSize.x, 0.5f * terrainData.blockSize.y, 0), Quaternion.identity);
 
         PlayerController playerController = player.GetComponent<PlayerController>();
         playerController.path = path.transform;
