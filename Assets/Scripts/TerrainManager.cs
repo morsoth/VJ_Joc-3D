@@ -272,22 +272,19 @@ public class TerrainManager : MonoBehaviour
 	{
         DestroyTerrain();
 
-        for (int i = 0; i < ROWS; ++i)
+        foreach (var (x, y) in pathHistory)
         {
-            for (int j = 0; j < COLS; ++j)
+            if (tilePrefabMap.ContainsKey(map[y, x]))
             {
-                if (map[i, j] != Tile.VOID && tilePrefabMap.ContainsKey(map[i, j]))
-                {
-                    float height = (float)topography[i, j] / 2;
+                float height = (float)topography[y, x] / 2;
 
-                    GameObject newTile = Instantiate(
-                            tilePrefabMap[map[i, j]],
-                            new Vector3(i * terrainData.blockSize.x, (height - (terrainData.blockSize.y / 4)) * terrainData.blockSize.y, j * terrainData.blockSize.z),
-                            Quaternion.identity,
-                            this.transform
-                        );
-                    newTile.gameObject.tag = "Ground";
-                }
+                GameObject newTile = Instantiate(
+                        tilePrefabMap[map[y, x]],
+                        new Vector3(y * terrainData.blockSize.x, (height - (terrainData.blockSize.y / 4)) * terrainData.blockSize.y, x * terrainData.blockSize.z),
+                        Quaternion.identity,
+                        this.transform
+                    );
+                newTile.gameObject.tag = "Ground";
             }
         }
     }
