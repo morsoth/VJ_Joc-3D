@@ -7,7 +7,8 @@ public class TerrainManager : MonoBehaviour
     [SerializeField] TerrainData terrainData;
 
     
-    Dictionary<Tile, GameObject> tilePrefabMap = new Dictionary<Tile, GameObject>();
+    Dictionary<Tile, GameObject> tilePrefabMapLight = new Dictionary<Tile, GameObject>();
+    Dictionary<Tile, GameObject> tilePrefabMapDark = new Dictionary<Tile, GameObject>();
 
     GameObject player;
     GameObject path;
@@ -36,13 +37,21 @@ public class TerrainManager : MonoBehaviour
 
     void Start()
     {
-        tilePrefabMap[Tile.HORIZONTAL] = terrainData.tilePrefabs[0];
-        tilePrefabMap[Tile.VERTICAL] = terrainData.tilePrefabs[1];
-        tilePrefabMap[Tile.LEFT_UP] = terrainData.tilePrefabs[2];
-        tilePrefabMap[Tile.LEFT_DOWN] = terrainData.tilePrefabs[3];
-        tilePrefabMap[Tile.RIGHT_UP] = terrainData.tilePrefabs[4];
-        tilePrefabMap[Tile.RIGHT_DOWN] = terrainData.tilePrefabs[5];
-        tilePrefabMap[Tile.CROSS] = terrainData.tilePrefabs[6];
+        tilePrefabMapLight[Tile.HORIZONTAL] = terrainData.tilePrefabsLight[0];
+        tilePrefabMapLight[Tile.VERTICAL] = terrainData.tilePrefabsLight[1];
+        tilePrefabMapLight[Tile.LEFT_UP] = terrainData.tilePrefabsLight[2];
+        tilePrefabMapLight[Tile.LEFT_DOWN] = terrainData.tilePrefabsLight[3];
+        tilePrefabMapLight[Tile.RIGHT_UP] = terrainData.tilePrefabsLight[4];
+        tilePrefabMapLight[Tile.RIGHT_DOWN] = terrainData.tilePrefabsLight[5];
+        tilePrefabMapLight[Tile.CROSS] = terrainData.tilePrefabsLight[6];
+
+        tilePrefabMapDark[Tile.HORIZONTAL] = terrainData.tilePrefabsDark[0];
+        tilePrefabMapDark[Tile.VERTICAL] = terrainData.tilePrefabsDark[1];
+        tilePrefabMapDark[Tile.LEFT_UP] = terrainData.tilePrefabsDark[2];
+        tilePrefabMapDark[Tile.LEFT_DOWN] = terrainData.tilePrefabsDark[3];
+        tilePrefabMapDark[Tile.RIGHT_UP] = terrainData.tilePrefabsDark[4];
+        tilePrefabMapDark[Tile.RIGHT_DOWN] = terrainData.tilePrefabsDark[5];
+        tilePrefabMapDark[Tile.CROSS] = terrainData.tilePrefabsDark[6];
 
         path = new GameObject("Path");
         path.transform.position = new Vector3(0, 0, 0);
@@ -274,17 +283,31 @@ public class TerrainManager : MonoBehaviour
 
         foreach (var (x, y) in pathHistory)
         {
-            if (tilePrefabMap.ContainsKey(map[y, x]))
+            if (tilePrefabMapLight.ContainsKey(map[y, x]) && tilePrefabMapDark.ContainsKey(map[y, x]))
             {
                 float height = (float)topography[y, x] / 2;
+                if ((x + y) % 2 == 0)
+                {
+                    GameObject newTile = Instantiate(
+                            tilePrefabMapLight[map[y, x]],
+                            new Vector3(y * terrainData.blockSize.x, (height - (terrainData.blockSize.y / 4)) * terrainData.blockSize.y, x * terrainData.blockSize.z),
+                            Quaternion.identity,
+                            this.transform
+                        );
 
-                GameObject newTile = Instantiate(
-                        tilePrefabMap[map[y, x]],
+                    newTile.gameObject.tag = "Ground";
+                }
+                else
+                {
+                    GameObject newTile = Instantiate(
+                        tilePrefabMapDark[map[y, x]],
                         new Vector3(y * terrainData.blockSize.x, (height - (terrainData.blockSize.y / 4)) * terrainData.blockSize.y, x * terrainData.blockSize.z),
                         Quaternion.identity,
                         this.transform
                     );
-                newTile.gameObject.tag = "Ground";
+                    
+                    newTile.gameObject.tag = "Ground";
+                }
             }
         }
     }

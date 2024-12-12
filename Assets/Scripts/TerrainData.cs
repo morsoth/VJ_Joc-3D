@@ -38,7 +38,8 @@ public class TerrainData : MonoBehaviour
 
     public GameObject playerPrefab;
 
-    public GameObject[] tilePrefabs;
+    public GameObject[] tilePrefabsLight;
+    public GameObject[] tilePrefabsDark;
 
     public Vector3 blockSize;
 }

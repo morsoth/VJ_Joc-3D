@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4915819595607619063}
   - component: {fileID: -2509292861742182981}
   m_Layer: 0
-  m_Name: Cross_1
+  m_Name: Cross_Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
