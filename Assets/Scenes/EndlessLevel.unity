@@ -252,7 +252,7 @@ GameObject:
   - component: {fileID: 1016054108}
   - component: {fileID: 1016054106}
   m_Layer: 0
-  m_Name: TerrainGenerator
+  m_Name: TerrainManager
   m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

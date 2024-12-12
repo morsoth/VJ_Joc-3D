@@ -6,7 +6,6 @@ public class TerrainManager : MonoBehaviour
 {
     [SerializeField] TerrainData terrainData;
 
-    
     Dictionary<Tile, GameObject> tilePrefabMapLight = new Dictionary<Tile, GameObject>();
     Dictionary<Tile, GameObject> tilePrefabMapDark = new Dictionary<Tile, GameObject>();
 
@@ -37,6 +36,8 @@ public class TerrainManager : MonoBehaviour
 
     void Start()
     {
+        Debug.Log("Load Level" + LevelManager.level);
+
         tilePrefabMapLight[Tile.HORIZONTAL] = terrainData.tilePrefabsLight[0];
         tilePrefabMapLight[Tile.VERTICAL] = terrainData.tilePrefabsLight[1];
         tilePrefabMapLight[Tile.LEFT_UP] = terrainData.tilePrefabsLight[2];
