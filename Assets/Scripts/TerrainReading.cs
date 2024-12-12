@@ -18,10 +18,15 @@ public class TerrainReading : MonoBehaviour
     }
 
     public LevelData levelData;
+    int mapLevel;
 
     void Start()
     {
         LoadLevelData(filePath);
+
+        mapLevel = 0;
+
+        // GenerateTerrain();
     }
 
     void LoadLevelData(string path)
@@ -32,15 +37,13 @@ public class TerrainReading : MonoBehaviour
             return;
         }
 
+        levelData.rows = 8;
+        levelData.cols = 20;
+
+        levelData.startPoint = new Vector2Int(0, 5);
+
         string[] lines = File.ReadAllLines(path);
         int currentLine = 0;
-
-        string[] dimensions = ReadNextLine();
-        levelData.rows = int.Parse(dimensions[0]);
-        levelData.cols = int.Parse(dimensions[1]);
-
-        string[] startPoint = ReadNextLine();
-        levelData.startPoint = new Vector2Int(int.Parse(startPoint[0]), int.Parse(startPoint[1]));
 
         string[] numMaps = ReadNextLine();
         levelData.numMaps = int.Parse(numMaps[0]);
@@ -76,9 +79,6 @@ public class TerrainReading : MonoBehaviour
     {
         if (levelData != null && levelData.numMaps > 0)
         {
-            Gizmos.color = Color.green;
-            Gizmos.DrawSphere(new Vector3(levelData.startPoint.y, -levelData.startPoint.x, 0), 0.2f);
-
             Gizmos.color = Color.white;
 
             for (int mapIndex = 0; mapIndex < levelData.maps.Count; mapIndex++)
@@ -90,11 +90,14 @@ public class TerrainReading : MonoBehaviour
                     {
                         if (map[row, col] == 1)
                         {
-                            Gizmos.DrawCube(new Vector3(col, -row, 0), Vector3.one * 0.9f);
+                            Gizmos.DrawCube(new Vector3(col, -row, mapIndex*5), Vector3.one * 0.9f);
                         }
                     }
                 }
             }
+
+            Gizmos.color = Color.red;
+            Gizmos.DrawSphere(new Vector3(levelData.startPoint.x, -levelData.startPoint.y, 0), 0.2f);
         }
     }
 }
