@@ -50,15 +50,23 @@ public class PlayerController : MonoBehaviour
         isGrounded = false;
     }
 
-    void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.CompareTag("Ground")) isGrounded = true;
-    }
-
     float GetDistanceToPointXZ(Transform point)
 	{
         float distance = Mathf.Sqrt(Mathf.Pow(transform.position.x - point.position.x, 2) + Mathf.Pow(transform.position.z - point.position.z, 2));
 
         return distance;
 	}
+
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Ground")) isGrounded = true;
+    }
+
+    void OnTriggerEnter(Collider collider) {
+        if (collider.gameObject.CompareTag("Obstacle"))
+        {
+            Debug.Log("DIE");
+            terrainManager.GenerateLevel();
+        }
+    }
 }

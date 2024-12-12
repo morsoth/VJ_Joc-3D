@@ -122,7 +122,7 @@ public class TerrainManager : MonoBehaviour
             }
             catch (System.Exception e)
 			{
-                Debug.Log("Exception: " + e.Message);
+                //Debug.Log("Exception: " + e.Message);
             }
         }
     }
@@ -251,7 +251,7 @@ public class TerrainManager : MonoBehaviour
             }
             catch (System.Exception e)
 			{
-                Debug.Log("Exception: " + e.Message);
+                //Debug.Log("Exception: " + e.Message);
             }
         }
     }
@@ -286,27 +286,35 @@ public class TerrainManager : MonoBehaviour
             if (tilePrefabMapLight.ContainsKey(map[y, x]) && tilePrefabMapDark.ContainsKey(map[y, x]))
             {
                 float height = (float)topography[y, x] / 2;
+
+                GameObject newTile;
                 if ((x + y) % 2 == 0)
                 {
-                    GameObject newTile = Instantiate(
+                    newTile = Instantiate(
                             tilePrefabMapLight[map[y, x]],
                             new Vector3(y * terrainData.blockSize.x, (height - (terrainData.blockSize.y / 4)) * terrainData.blockSize.y, x * terrainData.blockSize.z),
                             Quaternion.identity,
                             this.transform
                         );
-
-                    newTile.gameObject.tag = "Ground";
                 }
                 else
                 {
-                    GameObject newTile = Instantiate(
+                    newTile = Instantiate(
                         tilePrefabMapDark[map[y, x]],
                         new Vector3(y * terrainData.blockSize.x, (height - (terrainData.blockSize.y / 4)) * terrainData.blockSize.y, x * terrainData.blockSize.z),
                         Quaternion.identity,
                         this.transform
                     );
-                    
-                    newTile.gameObject.tag = "Ground";
+                }
+
+                if (topography[y, x] == Height.DOWN1)
+                {
+                    GameObject plant = Instantiate(
+                        terrainData.plantPrefab,
+                        new Vector3(y * terrainData.blockSize.x, height * terrainData.blockSize.y, x * terrainData.blockSize.z),
+                        Quaternion.identity,
+                        newTile.transform
+                    );
                 }
             }
         }
