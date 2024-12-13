@@ -6,6 +6,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float jumpForce = 1.0f;
     [SerializeField] float gravity = 9.8f;
 
+    public GameObject[] playerSkins;
+
     public Transform path;
     public TerrainManager terrainManager;
 
@@ -19,6 +21,9 @@ public class PlayerController : MonoBehaviour
         //path = GameObject.Find("Path").transform;
 
         rb.useGravity = false;
+
+        int random = Random.Range(0, 2);
+        Instantiate(playerSkins[random], transform.position, Quaternion.identity, this.transform);
     }
 
     void FixedUpdate()

@@ -300,14 +300,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6169bd70ac56fca48415ce85c756cb5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerPrefab: {fileID: 6322304915184393890, guid: dea1aa1a1c227572b869d11c3880ee16, type: 3}
+  playerPrefab: {fileID: 7195797765888108189, guid: 31a4471f5090d4b4a9bed8fcf06ef6f3, type: 3}
   tilePrefabsLight:
-  - {fileID: 4871475428048828375, guid: d3f0013a3f5e4df77b35b50dc0762a27, type: 3}
-  - {fileID: 3432359655679538221, guid: 614377ac9ce174094acdd15933c07125, type: 3}
-  - {fileID: 4909147850242540510, guid: 7788f759072a63a7484fbfe9ac6fb532, type: 3}
-  - {fileID: 3988533751190436958, guid: 2a96b5aed0a795fab9dab5416dcdd130, type: 3}
-  - {fileID: 4683869323576555826, guid: 557ec34f0088c762ea4d87f8e98d15b9, type: 3}
-  - {fileID: 4541912407394491091, guid: fd80f2507d33ee7a0962b50b9147611d, type: 3}
+  - {fileID: 6175482118117958007, guid: d3f0013a3f5e4df77b35b50dc0762a27, type: 3}
+  - {fileID: 6814117556527843234, guid: 614377ac9ce174094acdd15933c07125, type: 3}
+  - {fileID: 6779332417276511061, guid: 7788f759072a63a7484fbfe9ac6fb532, type: 3}
+  - {fileID: 5515900027181949427, guid: 2a96b5aed0a795fab9dab5416dcdd130, type: 3}
+  - {fileID: 30980818594323596, guid: 557ec34f0088c762ea4d87f8e98d15b9, type: 3}
+  - {fileID: 8759114548925443244, guid: fd80f2507d33ee7a0962b50b9147611d, type: 3}
   - {fileID: 2766654836301935322, guid: bc72df5a8b2e2ec93a613a3c00e357bb, type: 3}
   tilePrefabsDark:
   - {fileID: 5507530196021947654, guid: 6e3bb77eecefb344ea025b27647d96c3, type: 3}

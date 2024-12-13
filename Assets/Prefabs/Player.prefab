@@ -64,8 +64,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 8164078558771037576, guid: fab0800ad6066024aaef5c8ebdc67ef9, type: 3}
+      propertyPath: m_Name
+      value: dinosaur
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 8164078558771037576, guid: fab0800ad6066024aaef5c8ebdc67ef9, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: fab0800ad6066024aaef5c8ebdc67ef9, type: 3}
@@ -105,7 +110,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: -1.39, y: 2.99, z: 1.59}
+  m_Size: {x: 1.39, y: 2.99, z: 1.59}
   m_Center: {x: 0.05, y: 1.47, z: 0.24}
 --- !u!54 &6510618442913081684
 Rigidbody:
@@ -149,6 +154,9 @@ MonoBehaviour:
   moveSpeed: 7
   jumpForce: 25
   gravity: 100
+  playerSkins:
+  - {fileID: 919132149155446097, guid: fab0800ad6066024aaef5c8ebdc67ef9, type: 3}
+  - {fileID: 8733636420959438057, guid: f6c88dec8eb39faac819c0755f792e42, type: 3}
   path: {fileID: 0}
   terrainManager: {fileID: 0}
 --- !u!96 &3559271155518793587
