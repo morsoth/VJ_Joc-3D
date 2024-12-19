@@ -22,7 +22,7 @@ public class PlayerController : MonoBehaviour
 
         rb.useGravity = false;
 
-        int random = Random.Range(0, 2);
+        int random = Random.Range(0, playerSkins.Length);
         Instantiate(playerSkins[random], transform.position, Quaternion.identity, this.transform);
     }
 

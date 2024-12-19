@@ -156,7 +156,8 @@ MonoBehaviour:
   gravity: 100
   playerSkins:
   - {fileID: 919132149155446097, guid: fab0800ad6066024aaef5c8ebdc67ef9, type: 3}
-  - {fileID: 8733636420959438057, guid: f6c88dec8eb39faac819c0755f792e42, type: 3}
+  - {fileID: 919132149155446097, guid: f45fba779b8ec8747897f274394b01f6, type: 3}
+  - {fileID: 919132149155446097, guid: e896f1b27b2f21347ae1944205ae2ef3, type: 3}
   path: {fileID: 0}
   terrainManager: {fileID: 0}
 --- !u!96 &3559271155518793587
