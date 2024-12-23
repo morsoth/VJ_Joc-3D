@@ -8,7 +8,18 @@ public class LevelManager : MonoBehaviour
     public void LoadLevel(int lvl)
     {
         level = lvl;
-        SceneManager.LoadScene("EndlessLevel");
+
+        switch (lvl)
+        {
+            case 1:
+                SceneManager.LoadScene("Level01");
+                break;
+            case 2:
+                SceneManager.LoadScene("EndlessLevel");
+                break;
+            default:
+                throw new System.Exception("Couldn't find level " + lvl);
+        }
     }
 
     public void LoadEndelessLevel()

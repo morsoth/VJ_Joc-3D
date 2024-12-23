@@ -27,7 +27,7 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (index > path.childCount - 1)  terrainManager.GenerateLevel();
+        if (index > path.childCount - 1)  terrainManager.NextStage();
 
         Transform point = path.GetChild(index);
 
@@ -77,7 +77,7 @@ public class PlayerController : MonoBehaviour
         if (collider.gameObject.CompareTag("Obstacle"))
         {
             Debug.Log("DIE");
-            terrainManager.GenerateLevel();
+            terrainManager.NextStage();
         }
     }
 }
