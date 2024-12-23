@@ -251,6 +251,7 @@ GameObject:
   - component: {fileID: 1016054107}
   - component: {fileID: 1016054110}
   - component: {fileID: 1016054109}
+  - component: {fileID: 1016054111}
   m_Layer: 0
   m_Name: TerrainManager
   m_TagString: Ground
@@ -320,7 +321,26 @@ MonoBehaviour:
   - {fileID: 8624446298043192388, guid: 9825c93aa372a654185c628d208a87b8, type: 3}
   plantPrefab: {fileID: 1038084764743591058, guid: 0c3ed4f27b7fa83f796b13d5392ed608, type: 3}
   blockSize: {x: 2, y: 2, z: 2}
+  terrainLoader: {fileID: 1016054111}
   terrainGenerator: {fileID: 1016054109}
+--- !u!114 &1016054111
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1016054105}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8409adf387dee0644be369c9348872f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  filePath: Assets/Levels/Level1
+  levelData:
+    rows: 0
+    cols: 0
+    startPoint: {x: 0, y: 0}
+    numMaps: 0
 --- !u!1 &2033674979
 GameObject:
   m_ObjectHideFlags: 0
