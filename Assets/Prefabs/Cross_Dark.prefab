@@ -565,6 +565,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Center
       objectReference: {fileID: 0}
+    - target: {fileID: 1856401682667272, guid: 8828b445462270e4a82aae9b772ded64, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4608928823619044, guid: 8828b445462270e4a82aae9b772ded64, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.75

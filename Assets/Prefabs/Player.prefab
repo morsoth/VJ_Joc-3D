@@ -111,7 +111,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 1.39, y: 2.99, z: 1.59}
-  m_Center: {x: 0.05, y: 1.47, z: 0.24}
+  m_Center: {x: 0.05, y: 0, z: 0.24}
 --- !u!54 &6510618442913081684
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -155,9 +155,9 @@ MonoBehaviour:
   jumpForce: 25
   gravity: 100
   playerSkins:
-  - {fileID: 919132149155446097, guid: fab0800ad6066024aaef5c8ebdc67ef9, type: 3}
-  - {fileID: 919132149155446097, guid: f45fba779b8ec8747897f274394b01f6, type: 3}
-  - {fileID: 919132149155446097, guid: e896f1b27b2f21347ae1944205ae2ef3, type: 3}
+  - {fileID: 2591568894013570572, guid: 7b4c39934a2f6cac68096d9b155d7c90, type: 3}
+  - {fileID: 4030918792745174596, guid: ed1247603e63ee08f80b06c5f8feeec7, type: 3}
+  - {fileID: 6432156073976867437, guid: e67d9aaa1a86c73dc8961f44e6b3cbc4, type: 3}
   path: {fileID: 0}
   terrainManager: {fileID: 0}
 --- !u!96 &3559271155518793587
@@ -215,7 +215,7 @@ TrailRenderer:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.6000004
+        value: 0.4643967
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -236,7 +236,7 @@ TrailRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 0.5529412}
+      key0: {r: 1, g: 1, b: 1, a: 0.6862745}
       key1: {r: 1, g: 1, b: 1, a: 0}
       key2: {r: 0, g: 0, b: 0, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}

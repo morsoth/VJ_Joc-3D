@@ -18,12 +18,11 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         rb = gameObject.GetComponent<Rigidbody>();
-        //path = GameObject.Find("Path").transform;
 
         rb.useGravity = false;
 
         int random = Random.Range(0, playerSkins.Length);
-        Instantiate(playerSkins[random], transform.position, Quaternion.identity, this.transform);
+        Instantiate(playerSkins[random], this.transform);
     }
 
     void FixedUpdate()
@@ -37,6 +36,13 @@ public class PlayerController : MonoBehaviour
 
         Vector3 moveDirXZ = Vector3.MoveTowards(currentPositionXZ, pointPositionXZ, moveSpeed * Time.fixedDeltaTime);
         rb.MovePosition(new Vector3(moveDirXZ.x, rb.position.y, moveDirXZ.z));
+
+        Vector3 directionToPoint = (pointPositionXZ - currentPositionXZ).normalized;
+        if (directionToPoint != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(directionToPoint);
+            transform.rotation = targetRotation;
+        }
 
         if (GetDistanceToPointXZ(point) < 0.001f) index++;
 
