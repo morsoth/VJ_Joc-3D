@@ -13,16 +13,23 @@ public class PlayerController : MonoBehaviour
 
     int index = 0;
     Rigidbody rb;
+    Animator animator;
     bool isGrounded = true;
 
     void Start()
     {
         rb = gameObject.GetComponent<Rigidbody>();
-
         rb.useGravity = false;
+        
+        Invoke("FindAnimator", 0.1f);
 
         int random = Random.Range(0, playerSkins.Length);
         Instantiate(playerSkins[random], this.transform);
+    }
+
+    void FindAnimator()
+    {
+        animator = gameObject.GetComponentInChildren<Animator>();
     }
 
     void FixedUpdate()
@@ -51,7 +58,14 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKey(KeyCode.Space) && isGrounded) Jump();
+        if (Input.GetKey(KeyCode.Space) && isGrounded) {
+            Jump();
+        }
+
+        if (Input.GetKeyDown(KeyCode.N))
+        {
+            terrainManager.NextStage();
+        }
     }
 
     void Jump()
@@ -59,6 +73,7 @@ public class PlayerController : MonoBehaviour
         rb.linearVelocity = Vector3.zero;
         rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         isGrounded = false;
+        animator.SetTrigger("DoSquash");
     }
 
     float GetDistanceToPointXZ(Transform point)
@@ -70,7 +85,10 @@ public class PlayerController : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Ground")) isGrounded = true;
+        if (collision.gameObject.CompareTag("Ground")) 
+        {
+            isGrounded = true;            
+        }
     }
 
     void OnTriggerEnter(Collider collider) {
