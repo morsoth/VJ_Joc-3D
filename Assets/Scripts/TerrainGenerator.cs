@@ -32,7 +32,7 @@ public class TerrainGenerator : MonoBehaviour
     Tile prevTile;
     Height prevHeight;
 
-    void Start()
+    void Awake()
     {
         tilePrefabMapLight[Tile.HORIZONTAL] = terrainManager.tilePrefabsLight[0];
         tilePrefabMapLight[Tile.VERTICAL] = terrainManager.tilePrefabsLight[1];
@@ -71,7 +71,7 @@ public class TerrainGenerator : MonoBehaviour
         {
             try
             {
-                ClearPathPoints(); //Cambiar de sitio
+                ClearPathPoints();
                 pathHistory.Clear();
 
                 map = new Tile[ROWS, COLS];
@@ -266,39 +266,32 @@ public class TerrainGenerator : MonoBehaviour
 
         foreach (var (x, y) in pathHistory)
         {
-            if (tilePrefabMapLight.ContainsKey(map[y, x]) && tilePrefabMapDark.ContainsKey(map[y, x]))
+            float height = (float)topography[y, x] / 2;
+
+            Dictionary<Tile, GameObject> tilePrefabMap = (x + y) % 2 == 0 ? tilePrefabMapLight : tilePrefabMapDark;
+
+            if (tilePrefabMap.ContainsKey(map[y, x]))
             {
-                float height = (float)topography[y, x] / 2;
+                GameObject newTile = Instantiate(
+                    tilePrefabMap[map[y, x]],
+                    new Vector3(y * terrainManager.blockSize.x, (height - (terrainManager.blockSize.y / 4)) * terrainManager.blockSize.y, x * terrainManager.blockSize.z),
+                    Quaternion.identity,
+                    this.transform
+                );
 
-                GameObject newTile;
-                if ((x + y) % 2 == 0)
+                if (topography[y, x] == Height.DOWN1 && terrainManager.plantPrefab != null)
                 {
-                    newTile = Instantiate(
-                            tilePrefabMapLight[map[y, x]],
-                            new Vector3(y * terrainManager.blockSize.x, (height - (terrainManager.blockSize.y / 4)) * terrainManager.blockSize.y, x * terrainManager.blockSize.z),
-                            Quaternion.identity,
-                            this.transform
-                        );
-                }
-                else
-                {
-                    newTile = Instantiate(
-                        tilePrefabMapDark[map[y, x]],
-                        new Vector3(y * terrainManager.blockSize.x, (height - (terrainManager.blockSize.y / 4)) * terrainManager.blockSize.y, x * terrainManager.blockSize.z),
-                        Quaternion.identity,
-                        this.transform
-                    );
-                }
-
-                if (topography[y, x] == Height.DOWN1)
-                {
-                    GameObject plant = Instantiate(
+                    Instantiate(
                         terrainManager.plantPrefab,
                         new Vector3(y * terrainManager.blockSize.x, height * terrainManager.blockSize.y, x * terrainManager.blockSize.z),
                         Quaternion.identity,
                         newTile.transform
                     );
                 }
+            }
+            else
+            {
+                Debug.LogWarning($"No se encontró un prefab para el tile {map[y, x]} en la posición [{y}, {x}].");
             }
         }
     }
@@ -318,8 +311,6 @@ public class TerrainGenerator : MonoBehaviour
             Destroy(path.transform.GetChild(i).gameObject);
         }
     }
-
-    
 
     bool IsWithinBounds(int x, int y)
     { 

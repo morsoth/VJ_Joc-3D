@@ -53,7 +53,8 @@ public class TerrainManager : MonoBehaviour
     void Start()
     {
         Debug.Log("Level: " + LevelManager.level);
-        
+
+        NextStage();
     }
 
     public void NextStage()
@@ -66,7 +67,7 @@ public class TerrainManager : MonoBehaviour
         }
         else
         {
-            terrainLoader.LoadStage(0);
+            terrainLoader.LoadStage(1);
         }
 
         InstantiatePlayer();
@@ -77,7 +78,14 @@ public class TerrainManager : MonoBehaviour
         player = Instantiate(playerPrefab, new Vector3((8-3) * blockSize.x, 0.5f * blockSize.y, 0), Quaternion.identity);
 
         PlayerController playerController = player.GetComponent<PlayerController>();
-        playerController.path = terrainGenerator.path.transform;
+        if (LevelManager.level == -1)
+        {
+            playerController.path = terrainGenerator.path.transform;
+        }
+        else
+        {
+            playerController.path = terrainLoader.path.transform;
+        }
         playerController.terrainManager = this;
 	}
 

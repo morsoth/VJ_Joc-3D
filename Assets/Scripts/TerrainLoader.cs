@@ -12,26 +12,19 @@ public class TerrainLoader : MonoBehaviour
     Dictionary<Tile, GameObject> tilePrefabMapLight = new Dictionary<Tile, GameObject>();
     Dictionary<Tile, GameObject> tilePrefabMapDark = new Dictionary<Tile, GameObject>();
 
-    [Serializable]
-    public class LevelData
-    {
-        public Vector2Int startPoint;
-        public int numMaps;
-        public List<int[,]> maps = new List<int[,]>();
-    }
+    public int numMaps;
+    public List<Tile[,]> maps = new List<Tile[,]>();
+    public List<Height[,]> topography = new List<Height[,]>();
+
+    List<(int x, int y)> pathHistory = new List<(int, int)>();
 
     const int ROWS = 8;
     const int COLS = 20;
 
-    public LevelData levelData;
-
     public GameObject path;
-
-    Tile[,] map = new Tile[ROWS, COLS];
-    Height[,] topography = new Height[ROWS, COLS];
     int mapLevel;
 
-    void Start()
+    void Awake()
     {
         tilePrefabMapLight[Tile.HORIZONTAL] = terrainManager.tilePrefabsLight[0];
         tilePrefabMapLight[Tile.VERTICAL] = terrainManager.tilePrefabsLight[1];
@@ -49,7 +42,10 @@ public class TerrainLoader : MonoBehaviour
         tilePrefabMapDark[Tile.RIGHT_DOWN] = terrainManager.tilePrefabsDark[5];
         tilePrefabMapDark[Tile.CROSS] = terrainManager.tilePrefabsDark[6];
 
-        LoadLevelData(filePath);
+        LoadLevelData();
+
+        path = new GameObject("Path");
+        path.transform.position = new Vector3(0, 0, 0);
 
         mapLevel = 0;
     }
@@ -58,42 +54,77 @@ public class TerrainLoader : MonoBehaviour
     {
         mapLevel = stage;
 
-        //GenerateTerrain();
+        GenerateTerrain();
     }
 
-    void LoadLevelData(string path)
+    void LoadLevelData()
     {
-        if (!File.Exists(path))
+        if (!File.Exists(filePath))
         {
-            Debug.LogError($"El archivo {path} no existe.");
+            Debug.LogError($"El archivo {filePath} no existe.");
             return;
         }
 
-        levelData.startPoint = new Vector2Int(0, 5);
-
-        string[] lines = File.ReadAllLines(path);
+        string[] lines = File.ReadAllLines(filePath);
         int currentLine = 0;
 
-        string[] numMaps = ReadNextLine();
-        levelData.numMaps = int.Parse(numMaps[0]);
+        numMaps = int.Parse(ReadNextLine()[0]);
 
-
-        for (int mapIndex = 0; mapIndex < levelData.numMaps; mapIndex++)
+        for (int m = 0; m < numMaps; m++)
         {
-            //currentLine++;
-
-            int[,] map = new int[ROWS, COLS];
+            Tile[,] tileMap = new Tile[ROWS, COLS];
+            Height[,] heightMap = new Height[ROWS, COLS];
 
             for (int row = 0; row < ROWS; row++)
             {
                 string[] cells = ReadNextLine();
                 for (int col = 0; col < COLS; col++)
                 {
-                    map[row, col] = int.Parse(cells[col]);
+                    int cellValue = int.Parse(cells[col]);
+
+                    heightMap[row, col] = cellValue switch
+                    {
+                        0 => Height.VOID,
+                        1 => Height.NORMAL,
+                        2 => Height.DOWN1,
+                        3 => Height.UP1,
+                        4 => Height.UP2,
+                        _ => throw new Exception($"Valor inválido {cellValue} en la posición [{row}, {col}]")
+                    };
                 }
             }
 
-            levelData.maps.Add(map);
+            for (int row = 0; row < ROWS; row++)
+            {
+                for (int col = 0; col < COLS; col++)
+                {
+                    if (heightMap[row, col] == Height.VOID)
+                    {
+                        tileMap[row, col] = Tile.VOID;
+                        continue;
+                    }
+
+                    bool up = row > 0 && heightMap[row - 1, col] != Height.VOID;
+                    bool down = row < ROWS - 1 && heightMap[row + 1, col] != Height.VOID;
+                    bool left = col > 0 && heightMap[row, col - 1] != Height.VOID;
+                    bool right = col < COLS - 1 && heightMap[row, col + 1] != Height.VOID;
+
+                    tileMap[row, col] = (up, down, left, right) switch
+                    {
+                        (true, true, false, false) => Tile.VERTICAL,
+                        (false, false, true, true) => Tile.HORIZONTAL,
+                        (false, true, false, true) => Tile.LEFT_DOWN,
+                        (false, true, true, false) => Tile.RIGHT_DOWN,
+                        (true, false, false, true) => Tile.LEFT_UP,
+                        (true, false, true, false) => Tile.RIGHT_UP,
+                        (true, true, true, true) => Tile.CROSS,
+                        _ => Tile.VOID
+                    };
+                }
+            }
+
+            maps.Add(tileMap);
+            topography.Add(heightMap);
         }
 
         string[] ReadNextLine()
@@ -106,53 +137,74 @@ public class TerrainLoader : MonoBehaviour
 
     void GenerateTerrain()
 	{
+        ClearPathPoints();
+        pathHistory.Clear();
+        
         DestroyTerrain();
 
-        //foreach (var (x, y) in pathHistory)
-        for (int x = 0; x < COLS; ++x)
-        {
-            for (int y = 0; y < ROWS; ++y)
-            {
-                
-            }
-        }/* 
-        
-        {
-            if (tilePrefabMapLight.ContainsKey(map[y, x]) && tilePrefabMapDark.ContainsKey(map[y, x]))
-            {
-                float height = (float)topography[y, x] / 2;
+        Tile[,] tileMap = maps[mapLevel];
+        Height[,] heightMap = topography[mapLevel];
 
-                GameObject newTile;
-                if ((x + y) % 2 == 0)
+        for (int x = 0; x < COLS; x++)
+        {
+            for (int y = 0; y < ROWS; y++)
+            {
+                if (tileMap[y, x] == Tile.VOID) continue;
+
+                float height = (float)heightMap[y, x] / 2;
+                
+                Dictionary<Tile, GameObject> tilePrefabMap = (x + y) % 2 == 0 ? tilePrefabMapLight : tilePrefabMapDark;
+
+                if (tilePrefabMap.ContainsKey(tileMap[y, x]))
                 {
-                    newTile = Instantiate(
-                            tilePrefabMapLight[map[y, x]],
-                            new Vector3(y * terrainManager.blockSize.x, (height - (terrainManager.blockSize.y / 4)) * terrainManager.blockSize.y, x * terrainManager.blockSize.z),
-                            Quaternion.identity,
-                            this.transform
-                        );
-                }
-                else
-                {
-                    newTile = Instantiate(
-                        tilePrefabMapDark[map[y, x]],
+                    GameObject newTile = Instantiate(
+                        tilePrefabMap[tileMap[y, x]],
                         new Vector3(y * terrainManager.blockSize.x, (height - (terrainManager.blockSize.y / 4)) * terrainManager.blockSize.y, x * terrainManager.blockSize.z),
                         Quaternion.identity,
                         this.transform
                     );
-                }
 
-                if (topography[y, x] == Height.DOWN1)
+                    if (heightMap[y, x] == Height.DOWN1 && terrainManager.plantPrefab != null)
+                    {
+                        Instantiate(
+                            terrainManager.plantPrefab,
+                            new Vector3(y * terrainManager.blockSize.x, height * terrainManager.blockSize.y, x * terrainManager.blockSize.z),
+                            Quaternion.identity,
+                            newTile.transform
+                        );
+                    }
+
+                    if (IsCornerTile(tileMap[y, x]))
+                    {
+                        CreatePathPoint(x, y);
+                    }
+                }
+                else
                 {
-                    GameObject plant = Instantiate(
-                        terrainManager.plantPrefab,
-                        new Vector3(y * terrainManager.blockSize.x, height * terrainManager.blockSize.y, x * terrainManager.blockSize.z),
-                        Quaternion.identity,
-                        newTile.transform
-                    );
+                    Debug.LogWarning($"No se encontró un prefab para el tile {tileMap[y, x]} en la posición [{y}, {x}].");
                 }
             }
-        } */
+        }
+    }
+
+    void CreatePathPoint(int x, int y)
+    {
+        GameObject point = new GameObject("Point");
+        point.transform.SetParent(path.transform);
+        point.transform.localPosition = new Vector3(y * terrainManager.blockSize.x, 0, x * terrainManager.blockSize.z);
+    }
+
+    void ClearPathPoints()
+    {
+        for (int i = 0; i < path.transform.childCount; ++i)
+        {
+            Destroy(path.transform.GetChild(i).gameObject);
+        }
+    }
+
+    bool IsCornerTile(Tile tile)
+    {
+        return tile == Tile.LEFT_UP || tile == Tile.LEFT_DOWN || tile == Tile.RIGHT_UP || tile == Tile.RIGHT_DOWN;
     }
 
     void DestroyTerrain()
@@ -160,32 +212,6 @@ public class TerrainLoader : MonoBehaviour
         for (int i = 0; i < transform.childCount; ++i)
         {
             Destroy(transform.GetChild(i).gameObject);
-        }
-    }
-
-    void OnDrawGizmos()
-    {
-        if (levelData != null && levelData.numMaps > 0)
-        {
-            Gizmos.color = Color.white;
-
-            for (int mapIndex = 0; mapIndex < levelData.maps.Count; mapIndex++)
-            {
-                var map = levelData.maps[mapIndex];
-                for (int row = 0; row < ROWS; row++)
-                {
-                    for (int col = 0; col < COLS; col++)
-                    {
-                        if (map[row, col] == 1)
-                        {
-                            Gizmos.DrawCube(new Vector3(col, -row, mapIndex*5), Vector3.one * 0.9f);
-                        }
-                    }
-                }
-            }
-
-            Gizmos.color = Color.red;
-            Gizmos.DrawSphere(new Vector3(levelData.startPoint.x, -levelData.startPoint.y, 0), 0.2f);
         }
     }
 }
