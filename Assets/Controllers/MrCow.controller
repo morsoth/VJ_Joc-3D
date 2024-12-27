@@ -136,7 +136,6 @@ AnimatorStateTransition:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: 
-<<<<<<< HEAD:Assets/Models/MrCow.controller
   m_Conditions:
   - m_ConditionMode: 1
     m_ConditionEvent: Jump
@@ -168,11 +167,6 @@ AnimatorStateTransition:
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1432689910615788902}
-=======
-  m_Conditions: []
-  m_DstStateMachine: {fileID: 0}
-  m_DstState: {fileID: -244177811448415219}
->>>>>>> 8f5670654d5eb0217272405b09357b9f59a286b3:Assets/Controllers/MrCow.controller
   m_Solo: 0
   m_Mute: 0
   m_IsExit: 0
