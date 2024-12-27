@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using UnityEngine.SceneManagement;
 
 public enum Direction { LEFT, RIGHT, UP, DOWN }
 public enum Tile { VOID, HORIZONTAL, VERTICAL, LEFT_UP, LEFT_DOWN, RIGHT_UP, RIGHT_DOWN, CROSS }
@@ -56,9 +56,13 @@ public class TerrainManager : MonoBehaviour
 
     GameObject player;
 
+    int map;
+
     void Start()
     {
         Debug.Log("Level: " + level);
+
+        map = 0;
 
         NextStage();
     }
@@ -73,7 +77,13 @@ public class TerrainManager : MonoBehaviour
         }
         else
         {
-            terrainLoader.LoadStage(1);
+            if (map >= terrainLoader.numMaps)
+            {
+                Debug.Log("YOU WIN");
+                SceneManager.LoadScene("MainMenu");
+            }
+                
+            terrainLoader.LoadStage(map++);
         }
 
         StartCoroutine(InstantiatePlayerWithDelay(1f));

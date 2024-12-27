@@ -13,13 +13,16 @@ public class TerrainLoader : MonoBehaviour
     Dictionary<Tile, GameObject> tilePrefabMapDark = new Dictionary<Tile, GameObject>();
 
     public int numMaps;
-    public List<Tile[,]> maps = new List<Tile[,]>();
-    public List<Height[,]> topography = new List<Height[,]>();
+    List<Tile[,]> maps = new List<Tile[,]>();
+    List<Height[,]> topography = new List<Height[,]>();
 
     List<(int x, int y)> pathHistory = new List<(int, int)>();
 
     const int ROWS = 8;
     const int COLS = 20;
+
+    Vector2Int currentTile;
+    Direction direction;
 
     public GameObject path;
     int mapLevel;
@@ -54,6 +57,7 @@ public class TerrainLoader : MonoBehaviour
     {
         mapLevel = stage;
 
+        LoadMap();
         GenerateTerrain();
     }
 
@@ -109,14 +113,17 @@ public class TerrainLoader : MonoBehaviour
                     bool left = col > 0 && heightMap[row, col - 1] != Height.VOID;
                     bool right = col < COLS - 1 && heightMap[row, col + 1] != Height.VOID;
 
+                    if (col == 0) left = true;
+                    if (col == COLS - 1) right = true;
+
                     tileMap[row, col] = (up, down, left, right) switch
                     {
                         (true, true, false, false) => Tile.VERTICAL,
                         (false, false, true, true) => Tile.HORIZONTAL,
-                        (false, true, false, true) => Tile.LEFT_DOWN,
-                        (false, true, true, false) => Tile.RIGHT_DOWN,
-                        (true, false, false, true) => Tile.LEFT_UP,
-                        (true, false, true, false) => Tile.RIGHT_UP,
+                        (false, true, true, false) => Tile.LEFT_DOWN,
+                        (false, true, false, true) => Tile.RIGHT_DOWN,
+                        (true, false, true, false) => Tile.LEFT_UP,
+                        (true, false, false, true) => Tile.RIGHT_UP,
                         (true, true, true, true) => Tile.CROSS,
                         _ => Tile.VOID
                     };
@@ -135,54 +142,93 @@ public class TerrainLoader : MonoBehaviour
         }
     }
 
-    void GenerateTerrain()
+    void LoadMap()
 	{
         ClearPathPoints();
         pathHistory.Clear();
-        
+
+        Tile[,] tileMap = maps[mapLevel];
+
+        currentTile.x = 0;
+        currentTile.y = ROWS - 3;
+
+        direction = Direction.RIGHT;
+
+        while (IsWithinBounds(currentTile.x, currentTile.y))
+        {
+            Tile tile = tileMap[currentTile.y, currentTile.x];
+
+            if (tile == Tile.VOID) return; //ERROR
+
+            pathHistory.Add((currentTile.x, currentTile.y));
+
+            if (IsCornerTile(tile)) CreatePathPoint(currentTile.x, currentTile.y);
+
+            switch (tile)
+            {
+                case Tile.LEFT_UP:
+                    direction = (direction == Direction.RIGHT) ? Direction.UP : Direction.LEFT;
+                    break;
+                case Tile.LEFT_DOWN:
+                    direction = (direction == Direction.RIGHT) ? Direction.DOWN : Direction.LEFT;
+                    break;
+                case Tile.RIGHT_UP:
+                    direction = (direction == Direction.LEFT) ? Direction.UP : Direction.RIGHT;
+                    break;
+                case Tile.RIGHT_DOWN:
+                    direction = (direction == Direction.LEFT) ? Direction.DOWN : Direction.RIGHT;
+                    break;
+            }
+
+            switch (direction)
+            {
+                case Direction.LEFT: currentTile.x--; break;
+                case Direction.RIGHT: currentTile.x++; break;
+                case Direction.UP: currentTile.y--; break;
+                case Direction.DOWN: currentTile.y++; break;
+            }
+        }
+
+        CreatePathPoint(currentTile.x-1, currentTile.y);
+    }
+
+    void GenerateTerrain()
+	{
         DestroyTerrain();
 
         Tile[,] tileMap = maps[mapLevel];
         Height[,] heightMap = topography[mapLevel];
 
-        for (int x = 0; x < COLS; x++)
+        foreach (var (x, y) in pathHistory)
         {
-            for (int y = 0; y < ROWS; y++)
-            {
-                if (tileMap[y, x] == Tile.VOID) continue;
+            if (tileMap[y, x] == Tile.VOID) continue;
 
-                float height = (float)heightMap[y, x] / 2;
+            float height = (float)heightMap[y, x] / 2;
                 
-                Dictionary<Tile, GameObject> tilePrefabMap = (x + y) % 2 == 0 ? tilePrefabMapLight : tilePrefabMapDark;
+            Dictionary<Tile, GameObject> tilePrefabMap = (x + y) % 2 == 0 ? tilePrefabMapLight : tilePrefabMapDark;
 
-                if (tilePrefabMap.ContainsKey(tileMap[y, x]))
+            if (tilePrefabMap.ContainsKey(tileMap[y, x]))
+            {
+                GameObject newTile = Instantiate(
+                    tilePrefabMap[tileMap[y, x]],
+                    new Vector3(y * terrainManager.blockSize.x, (height - (terrainManager.blockSize.y / 4)) * terrainManager.blockSize.y, x * terrainManager.blockSize.z),
+                    Quaternion.identity,
+                    this.transform
+                );
+
+                if (heightMap[y, x] == Height.DOWN1 && terrainManager.plantPrefab != null)
                 {
-                    GameObject newTile = Instantiate(
-                        tilePrefabMap[tileMap[y, x]],
-                        new Vector3(y * terrainManager.blockSize.x, (height - (terrainManager.blockSize.y / 4)) * terrainManager.blockSize.y, x * terrainManager.blockSize.z),
+                    Instantiate(
+                        terrainManager.plantPrefab,
+                        new Vector3(y * terrainManager.blockSize.x, height * terrainManager.blockSize.y, x * terrainManager.blockSize.z),
                         Quaternion.identity,
-                        this.transform
+                        newTile.transform
                     );
-
-                    if (heightMap[y, x] == Height.DOWN1 && terrainManager.plantPrefab != null)
-                    {
-                        Instantiate(
-                            terrainManager.plantPrefab,
-                            new Vector3(y * terrainManager.blockSize.x, height * terrainManager.blockSize.y, x * terrainManager.blockSize.z),
-                            Quaternion.identity,
-                            newTile.transform
-                        );
-                    }
-
-                    if (IsCornerTile(tileMap[y, x]))
-                    {
-                        CreatePathPoint(x, y);
-                    }
                 }
-                else
-                {
-                    Debug.LogWarning($"No se encontró un prefab para el tile {tileMap[y, x]} en la posición [{y}, {x}].");
-                }
+            }
+            else
+            {
+                Debug.LogWarning($"No se encontró un prefab para el tile {tileMap[y, x]} en la posición [{y}, {x}].");
             }
         }
     }
@@ -200,6 +246,11 @@ public class TerrainLoader : MonoBehaviour
         {
             Destroy(path.transform.GetChild(i).gameObject);
         }
+    }
+
+    bool IsWithinBounds(int x, int y)
+    {
+        return (x >= 0 && x < COLS && y >= 0 && y < ROWS);
     }
 
     bool IsCornerTile(Tile tile)

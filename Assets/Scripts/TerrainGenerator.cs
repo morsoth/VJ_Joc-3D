@@ -185,6 +185,27 @@ public class TerrainGenerator : MonoBehaviour
         }
     }
 
+    Height GetNextHeight(Height currentHeight)
+    {
+        List<(Height, int)> validHeights = new List<(Height, int)>(terrainManager.heightProbabilities[currentHeight]);
+
+        int totalProbability = validHeights.Sum(p => p.Item2);
+
+        int randomValue = Random.Range(0, totalProbability);
+        int cumulative = 0;
+
+        foreach (var (nextHeight, chance) in validHeights)
+        {
+            cumulative += chance;
+            if (randomValue < cumulative)
+            {
+                return nextHeight;
+            }
+        }
+
+        return Height.NORMAL;
+    }
+
     void CreatePathPoint(int x, int y)
     {
         GameObject point = new GameObject("Point");
@@ -237,27 +258,6 @@ public class TerrainGenerator : MonoBehaviour
                 //Debug.Log("Exception: " + e.Message);
             }
         }
-    }
-
-    Height GetNextHeight(Height currentHeight)
-    {
-        List<(Height, int)> validHeights = new List<(Height, int)>(terrainManager.heightProbabilities[currentHeight]);
-
-        int totalProbability = validHeights.Sum(p => p.Item2);
-
-        int randomValue = Random.Range(0, totalProbability);
-        int cumulative = 0;
-
-        foreach (var (nextHeight, chance) in validHeights)
-        {
-            cumulative += chance;
-            if (randomValue < cumulative)
-            {
-                return nextHeight;
-            }
-        }
-
-        return Height.NORMAL;
     }
 
     void GenerateTerrain()

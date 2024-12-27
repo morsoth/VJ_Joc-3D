@@ -24,7 +24,7 @@ public class PlayerController : MonoBehaviour
         //Invoke("FindAnimator", 0.1f);
 
         animator = gameObject.GetComponentInChildren<Animator>();
-        Debug.Log("animator: " + animator);
+        //Debug.Log("animator: " + animator);
 
         int random = Random.Range(0, playerSkins.Length);
         GameObject skin = Instantiate(playerSkins[random], transform.Find("PlayerAnim"));
@@ -62,7 +62,7 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         if (Input.GetKey(KeyCode.Space) && isGrounded) {
-            Debug.Log("Set trigger");
+            //Debug.Log("Set trigger");
             animator.SetTrigger("Jump");
             Jump();
         }
