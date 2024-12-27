@@ -36,6 +36,10 @@ public class TerrainManager : MonoBehaviour
         { Height.DOWN1,     new List<(Height, int)> { (Height.NORMAL, 100) } },
     };
 
+    [Header("Level")]
+    public int level;
+
+    [Header("Map Settings")]
     public GameObject playerPrefab;
 
     public GameObject[] tilePrefabsLight;
@@ -45,6 +49,7 @@ public class TerrainManager : MonoBehaviour
 
     public Vector3 blockSize;
 
+    [Header("Terrain Objects")]
     [SerializeField] TerrainLoader terrainLoader;
     [SerializeField] TerrainGenerator terrainGenerator;
 
@@ -52,7 +57,7 @@ public class TerrainManager : MonoBehaviour
 
     void Start()
     {
-        Debug.Log("Level: " + LevelManager.level);
+        Debug.Log("Level: " + level);
 
         NextStage();
     }
@@ -61,7 +66,7 @@ public class TerrainManager : MonoBehaviour
     {
         DestroyPlayer();
 
-        if (LevelManager.level == -1)
+        if (level == -1)
         {
             terrainGenerator.GenerateStage();
         }
@@ -78,7 +83,7 @@ public class TerrainManager : MonoBehaviour
         player = Instantiate(playerPrefab, new Vector3((8-3) * blockSize.x, 0.5f * blockSize.y, 0), Quaternion.identity);
 
         PlayerController playerController = player.GetComponent<PlayerController>();
-        if (LevelManager.level == -1)
+        if (level == -1)
         {
             playerController.path = terrainGenerator.path.transform;
         }

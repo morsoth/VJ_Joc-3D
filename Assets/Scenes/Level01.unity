@@ -302,7 +302,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01d7fa028896f27b491c880935c4076b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerPrefab: {fileID: 7195797765888108189, guid: 31a4471f5090d4b4a9bed8fcf06ef6f3, type: 3}
+  level: 1
+  playerPrefab: {fileID: 751054587216501866, guid: 7d8918773c78bf34d9ad02d946568dd9, type: 3}
   tilePrefabsLight:
   - {fileID: 6175482118117958007, guid: d3f0013a3f5e4df77b35b50dc0762a27, type: 3}
   - {fileID: 6814117556527843234, guid: 614377ac9ce174094acdd15933c07125, type: 3}
@@ -337,11 +338,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   filePath: Assets/Levels/Level1
   terrainManager: {fileID: 1016054110}
-  levelData:
-    rows: 0
-    cols: 0
-    startPoint: {x: 0, y: 0}
-    numMaps: 0
+  numMaps: 0
   path: {fileID: 0}
 --- !u!1 &2033674979
 GameObject:
