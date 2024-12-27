@@ -20,20 +20,12 @@ public class PlayerController : MonoBehaviour
     {
         rb = gameObject.GetComponent<Rigidbody>();
         rb.useGravity = false;
-        
-        //Invoke("FindAnimator", 0.1f);
 
         animator = gameObject.GetComponentInChildren<Animator>();
-        //Debug.Log("animator: " + animator);
 
         int random = Random.Range(0, playerSkins.Length);
         GameObject skin = Instantiate(playerSkins[random], transform.Find("PlayerAnim"));
     }
-
-    /*void FindAnimator()
-    {
-        animator = gameObject.GetComponentInChildren<Animator>();
-    }*/
 
     void FixedUpdate()
     {
