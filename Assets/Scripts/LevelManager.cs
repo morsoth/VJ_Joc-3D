@@ -11,7 +11,7 @@ public class LevelManager : MonoBehaviour
                 SceneManager.LoadScene("Level01");
                 break;
             case 2:
-                SceneManager.LoadScene("EndlessLevel");
+                SceneManager.LoadScene("Level02");
                 break;
             default:
                 throw new System.Exception("Couldn't find level " + lvl);
