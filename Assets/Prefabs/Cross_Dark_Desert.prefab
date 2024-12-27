@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 7927446913207530534}
   - component: {fileID: 2542228253040574776}
   - component: {fileID: -5898743497681802752}
+  - component: {fileID: -8960476129702682573}
   m_Layer: 0
   m_Name: Cross_Dark_Desert
   m_TagString: Ground
@@ -86,6 +87,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &-8960476129702682573
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8624446298043192388}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0802cf3dc35930e458c2fa8164eb4b78, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &17164603772289788
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -75,6 +76,12 @@ public class TerrainManager : MonoBehaviour
             terrainLoader.LoadStage(1);
         }
 
+        StartCoroutine(InstantiatePlayerWithDelay(1f));
+    }
+
+    IEnumerator InstantiatePlayerWithDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
         InstantiatePlayer();
     }
 
