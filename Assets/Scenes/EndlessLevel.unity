@@ -336,11 +336,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   filePath: Assets/Levels/Level1
+  terrainManager: {fileID: 1016054110}
   levelData:
     rows: 0
     cols: 0
     startPoint: {x: 0, y: 0}
     numMaps: 0
+  path: {fileID: 0}
 --- !u!1 &2033674979
 GameObject:
   m_ObjectHideFlags: 0

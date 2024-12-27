@@ -53,21 +53,21 @@ public class TerrainManager : MonoBehaviour
     void Start()
     {
         Debug.Log("Level: " + LevelManager.level);
-        if (LevelManager.level == -1)
-        {
-            NextStage();
-        }
-        else
-        {
-            // READ LEVEL
-        }
+        
     }
 
     public void NextStage()
     {
         DestroyPlayer();
 
-        terrainGenerator.GenerateStage();
+        if (LevelManager.level == -1)
+        {
+            terrainGenerator.GenerateStage();
+        }
+        else
+        {
+            terrainLoader.LoadStage(0);
+        }
 
         InstantiatePlayer();
     }
