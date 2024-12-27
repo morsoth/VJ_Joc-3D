@@ -21,16 +21,19 @@ public class PlayerController : MonoBehaviour
         rb = gameObject.GetComponent<Rigidbody>();
         rb.useGravity = false;
         
-        Invoke("FindAnimator", 0.1f);
+        //Invoke("FindAnimator", 0.1f);
+
+        animator = gameObject.GetComponentInChildren<Animator>();
+        Debug.Log("animator: " + animator);
 
         int random = Random.Range(0, playerSkins.Length);
-        Instantiate(playerSkins[random], this.transform);
+        GameObject skin = Instantiate(playerSkins[random], transform.Find("PlayerAnim"));
     }
 
-    void FindAnimator()
+    /*void FindAnimator()
     {
         animator = gameObject.GetComponentInChildren<Animator>();
-    }
+    }*/
 
     void FixedUpdate()
     {
@@ -59,6 +62,8 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         if (Input.GetKey(KeyCode.Space) && isGrounded) {
+            Debug.Log("Set trigger");
+            animator.SetTrigger("Jump");
             Jump();
         }
 
@@ -73,7 +78,7 @@ public class PlayerController : MonoBehaviour
         rb.linearVelocity = Vector3.zero;
         rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         isGrounded = false;
-        animator.SetTrigger("DoSquash");
+        
     }
 
     float GetDistanceToPointXZ(Transform point)
