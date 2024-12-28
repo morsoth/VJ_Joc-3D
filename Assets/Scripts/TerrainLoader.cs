@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class TerrainLoader : MonoBehaviour
 {
-    public string filePath;
+    [SerializeField] TextAsset levelFile;
 
     [SerializeField] TerrainManager terrainManager;
 
@@ -63,13 +63,13 @@ public class TerrainLoader : MonoBehaviour
 
     void LoadLevelData()
     {
-        if (!File.Exists(filePath))
+        if (levelFile == null)
         {
-            Debug.LogError($"El archivo {filePath} no existe.");
+            Debug.LogError($"El archivo {levelFile.name} no existe.");
             return;
         }
 
-        string[] lines = File.ReadAllLines(filePath);
+        string[] lines = levelFile.text.Split('\n');
         int currentLine = 0;
 
         numMaps = int.Parse(ReadNextLine()[0]);
