@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class TerrainLoader : MonoBehaviour
 {
-    public string filePath = "Assets/Levels/Level1";
+    public string filePath;
 
     [SerializeField] TerrainManager terrainManager;
 

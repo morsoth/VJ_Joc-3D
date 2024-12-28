@@ -86,7 +86,7 @@ public class TerrainManager : MonoBehaviour
             terrainLoader.LoadStage(map++);
         }
 
-        StartCoroutine(InstantiatePlayerWithDelay(0.5f));
+        StartCoroutine(InstantiatePlayerWithDelay(1.0f));
     }
 
     IEnumerator InstantiatePlayerWithDelay(float delay)
