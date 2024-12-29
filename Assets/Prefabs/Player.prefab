@@ -116,7 +116,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: fab0800ad6066024aaef5c8ebdc67ef9, type: 3}
       propertyPath: m_Name
-      value: Player_Test
+      value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 8164078558771037576, guid: fab0800ad6066024aaef5c8ebdc67ef9, type: 3}
       propertyPath: m_Name
@@ -138,10 +138,10 @@ PrefabInstance:
       addedObject: {fileID: 2139378678539051744}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: fab0800ad6066024aaef5c8ebdc67ef9, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 7021972038991981281}
+      addedObject: {fileID: 1707654398583108820}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: fab0800ad6066024aaef5c8ebdc67ef9, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1707654398583108820}
+      addedObject: {fileID: 7021972038991981281}
   m_SourcePrefab: {fileID: 100100000, guid: fab0800ad6066024aaef5c8ebdc67ef9, type: 3}
 --- !u!4 &83202821289658064 stripped
 Transform:
@@ -201,27 +201,6 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 112
   m_CollisionDetection: 1
---- !u!114 &7021972038991981281
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 751054587216501866}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e813d0b108a56904c9690e6bfc9b80ac, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  moveSpeed: 7
-  jumpForce: 25
-  gravity: 100
-  playerSkins:
-  - {fileID: 2591568894013570572, guid: 7b4c39934a2f6cac68096d9b155d7c90, type: 3}
-  - {fileID: 4030918792745174596, guid: ed1247603e63ee08f80b06c5f8feeec7, type: 3}
-  - {fileID: 6432156073976867437, guid: e67d9aaa1a86c73dc8961f44e6b3cbc4, type: 3}
-  path: {fileID: 0}
-  terrainManager: {fileID: 0}
 --- !u!96 &1707654398583108820
 TrailRenderer:
   serializedVersion: 3
@@ -338,3 +317,24 @@ TrailRenderer:
   m_Autodestruct: 0
   m_Emitting: 1
   m_ApplyActiveColorSpace: 1
+--- !u!114 &7021972038991981281
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 751054587216501866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e813d0b108a56904c9690e6bfc9b80ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 7
+  jumpForce: 25
+  gravity: 100
+  playerSkins:
+  - {fileID: 2591568894013570572, guid: 7b4c39934a2f6cac68096d9b155d7c90, type: 3}
+  - {fileID: 4030918792745174596, guid: ed1247603e63ee08f80b06c5f8feeec7, type: 3}
+  - {fileID: 6432156073976867437, guid: e67d9aaa1a86c73dc8961f44e6b3cbc4, type: 3}
+  path: {fileID: 0}
+  terrainManager: {fileID: 0}

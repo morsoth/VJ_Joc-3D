@@ -23,8 +23,16 @@ public class PlayerController : MonoBehaviour
 
         animator = gameObject.GetComponentInChildren<Animator>();
 
-        int random = Random.Range(0, playerSkins.Length);
-        GameObject skin = Instantiate(playerSkins[random], transform.Find("PlayerAnim"));
+        string playerSkin = PlayerPrefs.GetString("PlayerSkin", "dinosaur");
+
+        for (int i = 0; i < playerSkins.Length; i++)
+        {
+            if (playerSkins[i].name == playerSkin)
+            {
+                GameObject skin = Instantiate(playerSkins[i], transform.Find("PlayerAnim"));
+                break;
+            }
+        }
     }
 
     void FixedUpdate()
