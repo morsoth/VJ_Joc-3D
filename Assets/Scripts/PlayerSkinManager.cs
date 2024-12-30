@@ -11,18 +11,21 @@ public class PlayerSkinManager : MonoBehaviour
     public GameObject currentSkin;
     int currentSkinIndex = 0;
 
-    public float rotationSpeed = 30f;
+    public float rotationSpeed = 60f;
 
     void Start()
     {
-        string playerSkin = PlayerPrefs.GetString("PlayerSkin", "dinosaur");
-
-        for (int i = 0; i < playerSkins.Length; i++)
+        if (PlayerPrefs.HasKey("PlayerSkin"))
         {
-            if (playerSkins[i].name == playerSkin)
+            string playerSkin = PlayerPrefs.GetString("PlayerSkin", "dinosaur");
+
+            for (int i = 0; i < playerSkins.Length; i++)
             {
-                currentSkinIndex = i;
-                break;
+                if (playerSkins[i].name == playerSkin)
+                {
+                    currentSkinIndex = i;
+                    break;
+                }
             }
         }
 

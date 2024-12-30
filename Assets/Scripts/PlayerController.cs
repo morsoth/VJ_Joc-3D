@@ -16,6 +16,8 @@ public class PlayerController : MonoBehaviour
     Animator animator;
     bool isGrounded = true;
 
+    public int coins;
+
     void Start()
     {
         rb = gameObject.GetComponent<Rigidbody>();
@@ -33,6 +35,8 @@ public class PlayerController : MonoBehaviour
                 break;
             }
         }
+
+        coins = PlayerPrefs.GetInt("PlayerCoins");
     }
 
     void FixedUpdate()
@@ -88,6 +92,13 @@ public class PlayerController : MonoBehaviour
         return distance;
 	}
 
+    void AddCoin()
+	{
+        coins++;
+        PlayerPrefs.SetInt("PlayerCoins", coins);
+        PlayerPrefs.Save();
+    }
+
     void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Ground")) 
@@ -101,6 +112,11 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log("DIE");
             terrainManager.NextStage();
+        }
+        else if (collider.gameObject.CompareTag("Coin"))
+        {
+            AddCoin();
+            Destroy(collider.gameObject);
         }
     }
 }
