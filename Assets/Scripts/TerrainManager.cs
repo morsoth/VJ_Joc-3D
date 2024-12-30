@@ -33,8 +33,6 @@ public class TerrainManager : MonoBehaviour
 
     void Start()
     {
-        Debug.Log("Level: " + level);
-
         map = 0;
 
         NextStage();
@@ -52,14 +50,26 @@ public class TerrainManager : MonoBehaviour
         {
             if (map >= terrainLoader.numMaps)
             {
-                Debug.Log("YOU WIN");
-                SceneManager.LoadScene("MainMenu");
+                PlayerWin();
+                return;
             }
                 
             terrainLoader.LoadStage(map++);
         }
 
         StartCoroutine(InstantiatePlayerWithDelay(1.0f));
+    }
+
+    public void PlayerDie()
+	{
+        Debug.Log("YOU DIED");
+        SceneManager.LoadScene("MainMenu");
+    }
+
+    public void PlayerWin()
+    {
+        Debug.Log("YOU WON");
+        SceneManager.LoadScene("MainMenu");
     }
 
     IEnumerator InstantiatePlayerWithDelay(float delay)

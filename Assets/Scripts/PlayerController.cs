@@ -66,8 +66,6 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         if (Input.GetKey(KeyCode.Space) && isGrounded) {
-            //Debug.Log("Set trigger");
-            animator.SetTrigger("Jump");
             Jump();
         }
 
@@ -82,7 +80,8 @@ public class PlayerController : MonoBehaviour
         rb.linearVelocity = Vector3.zero;
         rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         isGrounded = false;
-        
+        animator.SetTrigger("Jump");
+
     }
 
     float GetDistanceToPointXZ(Transform point)
@@ -99,19 +98,27 @@ public class PlayerController : MonoBehaviour
         PlayerPrefs.Save();
     }
 
+    void Die()
+    {
+        terrainManager.PlayerDie();
+    }
+
     void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Ground")) 
+        if (collision.gameObject.CompareTag("Obstacle")) 
         {
-            isGrounded = true;            
+            Die();
+        }
+        else if (collision.gameObject.CompareTag("Ground"))
+        {
+            isGrounded = true;
         }
     }
 
     void OnTriggerEnter(Collider collider) {
         if (collider.gameObject.CompareTag("Obstacle"))
         {
-            Debug.Log("DIE");
-            terrainManager.NextStage();
+            Die();
         }
         else if (collider.gameObject.CompareTag("Coin"))
         {

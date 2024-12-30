@@ -76,15 +76,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: fab0800ad6066024aaef5c8ebdc67ef9, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 5.736973
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: fab0800ad6066024aaef5c8ebdc67ef9, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.619911
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: fab0800ad6066024aaef5c8ebdc67ef9, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 3.4817169
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: fab0800ad6066024aaef5c8ebdc67ef9, type: 3}
       propertyPath: m_LocalRotation.w
@@ -338,3 +338,7 @@ MonoBehaviour:
   - {fileID: 6432156073976867437, guid: e67d9aaa1a86c73dc8961f44e6b3cbc4, type: 3}
   path: {fileID: 0}
   terrainManager: {fileID: 0}
+  coins: 0
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
