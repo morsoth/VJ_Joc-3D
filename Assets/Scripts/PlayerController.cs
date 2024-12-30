@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -65,13 +66,18 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKey(KeyCode.Space) && isGrounded) {
+        if ((Input.GetKey(KeyCode.Space) || Input.GetMouseButton(0)) && isGrounded) {
             Jump();
         }
 
         if (Input.GetKeyDown(KeyCode.N))
         {
             terrainManager.NextStage();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            SceneManager.LoadScene("MainMenu");
         }
     }
 

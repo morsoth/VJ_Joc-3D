@@ -63,7 +63,17 @@ public class TerrainManager : MonoBehaviour
     public void PlayerDie()
 	{
         Debug.Log("YOU DIED");
-        SceneManager.LoadScene("MainMenu");
+        if (level == 1)
+        {
+            SceneManager.LoadScene("level01");
+        }
+        else if (level == 2)
+        {
+            SceneManager.LoadScene("level02");
+        }
+        else {
+            SceneManager.LoadScene("EndlessLevel");
+        }
     }
 
     public void PlayerWin()

@@ -3,6 +3,22 @@ using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour
 {
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            LoadLevel(1);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            LoadLevel(2);
+        }
+        else if (Input.GetKeyDown(KeyCode.E))
+        {
+            LoadEndlessLevel();
+        }
+    }
+
     public void LoadLevel(int lvl)
     {
         switch (lvl)
@@ -18,7 +34,7 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    public void LoadEndelessLevel()
+    public void LoadEndlessLevel()
     {
         SceneManager.LoadScene("EndlessLevel");
     }
