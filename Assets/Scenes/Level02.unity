@@ -321,6 +321,7 @@ MonoBehaviour:
   - {fileID: 2432770233566819108, guid: 8461a44ab6404eb4398c332c5f4ba218, type: 3}
   - {fileID: 7790213044990113348, guid: 1ba3c38ab5f8be841a1e2d0e550171dd, type: 3}
   plantPrefab: {fileID: 1038084764743591058, guid: 0c3ed4f27b7fa83f796b13d5392ed608, type: 3}
+  coinPrefab: {fileID: 3237508626966066575, guid: a5ce1e95f564a2f41b34c9a0f5301903, type: 3}
   blockSize: {x: 2, y: 2, z: 2}
   terrainLoader: {fileID: 1016054111}
   terrainGenerator: {fileID: 1016054109}

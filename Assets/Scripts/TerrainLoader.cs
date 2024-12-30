@@ -93,6 +93,7 @@ public class TerrainLoader : MonoBehaviour
                         2 => Height.DOWN1,
                         3 => Height.UP1,
                         4 => Height.UP2,
+                        5 => Height.COIN,
                         _ => throw new Exception($"Valor inválido {cellValue} en la posición [{row}, {col}]")
                     };
                 }
@@ -204,7 +205,8 @@ public class TerrainLoader : MonoBehaviour
             if (tileMap[y, x] == Tile.VOID) continue;
 
             float height = (float)heightMap[y, x] / 2;
-                
+            if (heightMap[y, x] == Height.COIN) height = (float)Height.NORMAL / 2;
+
             Dictionary<Tile, GameObject> tilePrefabMap = (x + y) % 2 == 0 ? tilePrefabMapLight : tilePrefabMapDark;
 
             if (tilePrefabMap.ContainsKey(tileMap[y, x]))
@@ -221,6 +223,15 @@ public class TerrainLoader : MonoBehaviour
                     Instantiate(
                         terrainManager.plantPrefab,
                         new Vector3(y * terrainManager.blockSize.x, height * terrainManager.blockSize.y, x * terrainManager.blockSize.z),
+                        Quaternion.identity,
+                        newTile.transform
+                    );
+                }
+                else if (heightMap[y, x] == Height.COIN && terrainManager.coinPrefab != null)
+                {
+                    Instantiate(
+                        terrainManager.coinPrefab,
+                        new Vector3(y * terrainManager.blockSize.x, (height + 0.5f) * terrainManager.blockSize.y, x * terrainManager.blockSize.z),
                         Quaternion.identity,
                         newTile.transform
                     );

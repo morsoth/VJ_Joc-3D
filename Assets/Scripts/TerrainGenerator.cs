@@ -6,6 +6,34 @@ public class TerrainGenerator : MonoBehaviour
 {
     [SerializeField] TerrainManager terrainManager;
 
+    Dictionary<(Tile, Direction), List<(Tile, int)>> probabilities = new Dictionary<(Tile, Direction), List<(Tile, int)>>()
+    {
+        { (Tile.HORIZONTAL, Direction.LEFT),    new List<(Tile, int)>{ (Tile.HORIZONTAL, 30), (Tile.RIGHT_UP, 35), (Tile.RIGHT_DOWN, 35) } },
+        { (Tile.HORIZONTAL, Direction.RIGHT),   new List<(Tile, int)>{ (Tile.HORIZONTAL, 70), (Tile.LEFT_UP, 15), (Tile.LEFT_DOWN, 15) } },
+        { (Tile.VERTICAL, Direction.UP),        new List<(Tile, int)>{ (Tile.VERTICAL, 40), (Tile.LEFT_DOWN, 20), (Tile.RIGHT_DOWN, 40) } },
+        { (Tile.VERTICAL, Direction.DOWN),      new List<(Tile, int)>{ (Tile.VERTICAL, 40), (Tile.LEFT_UP, 20), (Tile.RIGHT_UP, 40) } },
+        { (Tile.LEFT_UP, Direction.LEFT),       new List<(Tile, int)>{ (Tile.HORIZONTAL, 100) } },
+        { (Tile.LEFT_UP, Direction.UP),         new List<(Tile, int)>{ (Tile.VERTICAL, 100) } },
+        { (Tile.LEFT_DOWN, Direction.LEFT),     new List<(Tile, int)>{ (Tile.HORIZONTAL, 100) } },
+        { (Tile.LEFT_DOWN, Direction.DOWN),     new List<(Tile, int)>{ (Tile.VERTICAL, 100) } },
+        { (Tile.RIGHT_UP, Direction.RIGHT),     new List<(Tile, int)>{ (Tile.HORIZONTAL, 100) } },
+        { (Tile.RIGHT_UP, Direction.UP),        new List<(Tile, int)>{ (Tile.VERTICAL, 100) } },
+        { (Tile.RIGHT_DOWN, Direction.RIGHT),   new List<(Tile, int)>{ (Tile.HORIZONTAL, 100) } },
+        { (Tile.RIGHT_DOWN, Direction.DOWN),    new List<(Tile, int)>{ (Tile.VERTICAL, 100) } },
+        { (Tile.CROSS, Direction.LEFT),         new List<(Tile, int)>{ (Tile.HORIZONTAL, 100) } },
+        { (Tile.CROSS, Direction.RIGHT),        new List<(Tile, int)>{ (Tile.HORIZONTAL, 100) } },
+        { (Tile.CROSS, Direction.UP),           new List<(Tile, int)>{ (Tile.VERTICAL, 100) } },
+        { (Tile.CROSS, Direction.DOWN),         new List<(Tile, int)>{ (Tile.VERTICAL, 100) } },
+    };
+
+    Dictionary<Height, List<(Height, int)>> heightProbabilities = new Dictionary<Height, List<(Height, int)>>()
+    {
+        { Height.NORMAL,    new List<(Height, int)> { (Height.NORMAL, 70), (Height.UP1, 18), (Height.UP2, 2), (Height.DOWN1, 10) } },
+        { Height.UP1,       new List<(Height, int)> { (Height.NORMAL, 70), (Height.UP1, 20), (Height.DOWN1, 10) } },
+        { Height.UP2,       new List<(Height, int)> { (Height.NORMAL, 70), (Height.UP2, 20), (Height.DOWN1, 10) } },
+        { Height.DOWN1,     new List<(Height, int)> { (Height.NORMAL, 100) } },
+    };
+
     Dictionary<Tile, GameObject> tilePrefabMapLight = new Dictionary<Tile, GameObject>();
     Dictionary<Tile, GameObject> tilePrefabMapDark = new Dictionary<Tile, GameObject>();
 
@@ -113,9 +141,9 @@ public class TerrainGenerator : MonoBehaviour
     Tile GetRandomTile(Tile currentTile, Direction direction)
     {
         var key = (currentTile, direction);
-        if (!terrainManager.probabilities.ContainsKey(key)) return Tile.VOID;
+        if (!probabilities.ContainsKey(key)) return Tile.VOID;
 
-        List<(Tile, int)> validTiles = terrainManager.probabilities[key].Where(tileChance =>
+        List<(Tile, int)> validTiles = probabilities[key].Where(tileChance =>
         {
             Tile tile = tileChance.Item1;
             Direction testDirection = GetDirectionAfterTile(direction, tile);
@@ -187,7 +215,7 @@ public class TerrainGenerator : MonoBehaviour
 
     Height GetNextHeight(Height currentHeight)
     {
-        List<(Height, int)> validHeights = new List<(Height, int)>(terrainManager.heightProbabilities[currentHeight]);
+        List<(Height, int)> validHeights = new List<(Height, int)>(heightProbabilities[currentHeight]);
 
         int totalProbability = validHeights.Sum(p => p.Item2);
 
@@ -267,6 +295,7 @@ public class TerrainGenerator : MonoBehaviour
         foreach (var (x, y) in pathHistory)
         {
             float height = (float)topography[y, x] / 2;
+            if (topography[y, x] == Height.COIN) height = (float)Height.NORMAL / 2;
 
             Dictionary<Tile, GameObject> tilePrefabMap = (x + y) % 2 == 0 ? tilePrefabMapLight : tilePrefabMapDark;
 
@@ -284,6 +313,15 @@ public class TerrainGenerator : MonoBehaviour
                     Instantiate(
                         terrainManager.plantPrefab,
                         new Vector3(y * terrainManager.blockSize.x, height * terrainManager.blockSize.y, x * terrainManager.blockSize.z),
+                        Quaternion.identity,
+                        newTile.transform
+                    );
+                }
+                else if (topography[y, x] == Height.COIN && terrainManager.coinPrefab != null)
+                {
+                    Instantiate(
+                        terrainManager.coinPrefab,
+                        new Vector3(y * terrainManager.blockSize.x, (height + 0.5f) * terrainManager.blockSize.y, x * terrainManager.blockSize.z),
                         Quaternion.identity,
                         newTile.transform
                     );

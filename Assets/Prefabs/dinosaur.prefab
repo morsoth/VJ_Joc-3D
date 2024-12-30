@@ -52,6 +52,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: dinosaur
       objectReference: {fileID: 0}
+    - target: {fileID: 8164078558771037576, guid: fab0800ad6066024aaef5c8ebdc67ef9, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

@@ -1037,9 +1037,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2087329334}
     m_Modifications:
+    - target: {fileID: 3238175239362471825, guid: ed1247603e63ee08f80b06c5f8feeec7, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3238175239362471825, guid: ed1247603e63ee08f80b06c5f8feeec7, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4de6acf890a47e8418dfb72810e70fcc, type: 2}
+    - target: {fileID: 3238175239362471825, guid: ed1247603e63ee08f80b06c5f8feeec7, type: 3}
+      propertyPath: 'm_Materials.Array.data[2]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 106f3ff43a17d4967a2b64c7a92e49ec, type: 2}
     - target: {fileID: 4030918792745174596, guid: ed1247603e63ee08f80b06c5f8feeec7, type: 3}
       propertyPath: m_Name
       value: giraffe
+      objectReference: {fileID: 0}
+    - target: {fileID: 4030918792745174596, guid: ed1247603e63ee08f80b06c5f8feeec7, type: 3}
+      propertyPath: m_Layer
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4376201300580605182, guid: ed1247603e63ee08f80b06c5f8feeec7, type: 3}
       propertyPath: m_LocalPosition.x
