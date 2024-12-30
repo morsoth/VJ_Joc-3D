@@ -8,10 +8,10 @@ public class TerrainGenerator : MonoBehaviour
 
     Dictionary<(Tile, Direction), List<(Tile, int)>> probabilities = new Dictionary<(Tile, Direction), List<(Tile, int)>>()
     {
-        { (Tile.HORIZONTAL, Direction.LEFT),    new List<(Tile, int)>{ (Tile.HORIZONTAL, 30), (Tile.RIGHT_UP, 35), (Tile.RIGHT_DOWN, 35) } },
-        { (Tile.HORIZONTAL, Direction.RIGHT),   new List<(Tile, int)>{ (Tile.HORIZONTAL, 70), (Tile.LEFT_UP, 15), (Tile.LEFT_DOWN, 15) } },
-        { (Tile.VERTICAL, Direction.UP),        new List<(Tile, int)>{ (Tile.VERTICAL, 40), (Tile.LEFT_DOWN, 20), (Tile.RIGHT_DOWN, 40) } },
-        { (Tile.VERTICAL, Direction.DOWN),      new List<(Tile, int)>{ (Tile.VERTICAL, 40), (Tile.LEFT_UP, 20), (Tile.RIGHT_UP, 40) } },
+        { (Tile.HORIZONTAL, Direction.LEFT),    new List<(Tile, int)>{ (Tile.HORIZONTAL, 50), (Tile.RIGHT_UP, 25), (Tile.RIGHT_DOWN, 25) } },
+        { (Tile.HORIZONTAL, Direction.RIGHT),   new List<(Tile, int)>{ (Tile.HORIZONTAL, 50), (Tile.LEFT_UP, 25), (Tile.LEFT_DOWN, 25) } },
+        { (Tile.VERTICAL, Direction.UP),        new List<(Tile, int)>{ (Tile.VERTICAL, 50), (Tile.LEFT_DOWN, 25), (Tile.RIGHT_DOWN, 25) } },
+        { (Tile.VERTICAL, Direction.DOWN),      new List<(Tile, int)>{ (Tile.VERTICAL, 50), (Tile.LEFT_UP, 25), (Tile.RIGHT_UP, 25) } },
         { (Tile.LEFT_UP, Direction.LEFT),       new List<(Tile, int)>{ (Tile.HORIZONTAL, 100) } },
         { (Tile.LEFT_UP, Direction.UP),         new List<(Tile, int)>{ (Tile.VERTICAL, 100) } },
         { (Tile.LEFT_DOWN, Direction.LEFT),     new List<(Tile, int)>{ (Tile.HORIZONTAL, 100) } },
@@ -28,10 +28,11 @@ public class TerrainGenerator : MonoBehaviour
 
     Dictionary<Height, List<(Height, int)>> heightProbabilities = new Dictionary<Height, List<(Height, int)>>()
     {
-        { Height.NORMAL,    new List<(Height, int)> { (Height.NORMAL, 70), (Height.UP1, 18), (Height.UP2, 2), (Height.DOWN1, 10) } },
-        { Height.UP1,       new List<(Height, int)> { (Height.NORMAL, 70), (Height.UP1, 20), (Height.DOWN1, 10) } },
-        { Height.UP2,       new List<(Height, int)> { (Height.NORMAL, 70), (Height.UP2, 20), (Height.DOWN1, 10) } },
-        { Height.DOWN1,     new List<(Height, int)> { (Height.NORMAL, 100) } },
+        { Height.NORMAL,    new List<(Height, int)> { (Height.NORMAL, 62), (Height.UP1, 18), (Height.UP2, 2), (Height.DOWN1, 10), (Height.COIN, 8) } },
+        { Height.UP1,       new List<(Height, int)> { (Height.NORMAL, 62), (Height.UP1, 20), (Height.DOWN1, 10), (Height.COIN, 8) } },
+        { Height.UP2,       new List<(Height, int)> { (Height.NORMAL, 62), (Height.UP2, 20), (Height.DOWN1, 10), (Height.COIN, 8) } },
+        { Height.DOWN1,     new List<(Height, int)> { (Height.NORMAL, 92), (Height.COIN, 8) } },
+        { Height.COIN,      new List<(Height, int)> { (Height.NORMAL, 70), (Height.UP1, 18), (Height.UP2, 2), (Height.DOWN1, 10) } },
     };
 
     Dictionary<Tile, GameObject> tilePrefabMapLight = new Dictionary<Tile, GameObject>();
@@ -40,15 +41,18 @@ public class TerrainGenerator : MonoBehaviour
     const int ROWS = 8;
     const int COLS = 20;
 
-    int marginTiles = 4;
+    int marginTiles = 2;
 
     Vector2Int currentTile;
 
     int numTiles;
-    [SerializeField] int maxNumTiles = 40;
+    int maxNumTiles = 40;
 
     int numObstacles;
-    [SerializeField] int minNumObstacles = 5;
+    int minNumObstacles = 7;
+
+    int numCoins;
+    int minNumCoins = 1;
 
     public GameObject path;
 
@@ -124,6 +128,7 @@ public class TerrainGenerator : MonoBehaviour
                 }
 
                 if (currentTile.x != COLS - marginTiles) throw new System.Exception("Path doesn't end correctly");
+                if (currentTile.y < ROWS - 5 || currentTile.y > ROWS - 1) throw new System.Exception("Path doesn't end correctly");
 
                 for (int i = 0; i < marginTiles; ++i) PlaceTile(Tile.HORIZONTAL);
 
@@ -250,6 +255,7 @@ public class TerrainGenerator : MonoBehaviour
             try
             {
                 numObstacles = 0;
+                numCoins = 0;
                 prevHeight = Height.NORMAL;
 
                 foreach (var (x, y) in pathHistory)
@@ -271,12 +277,14 @@ public class TerrainGenerator : MonoBehaviour
                         nextHeight = Height.NORMAL;
                     }
 
-                    if (nextHeight != Height.NORMAL) ++numObstacles;
+                    if (nextHeight == Height.COIN) ++numCoins;
+                    else if (nextHeight != Height.NORMAL) ++numObstacles;
 
                     topography[y, x] = nextHeight;
                     prevHeight = nextHeight;
                 }
 
+                if (numCoins < minNumCoins) throw new System.Exception("Path has too few coins");
                 if (numObstacles < minNumObstacles) throw new System.Exception("Path has too few obstacles");
 
                 isValidMap = true;
