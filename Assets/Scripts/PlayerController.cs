@@ -42,7 +42,11 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (index > path.childCount - 1)  terrainManager.NextStage();
+        if (index > path.childCount - 1)
+        {
+            terrainManager.NextStage();
+            return;
+        }
 
         Transform point = path.GetChild(index);
 

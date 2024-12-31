@@ -2,48 +2,63 @@ using UnityEngine;
 
 public class TileController : MonoBehaviour
 {
-    float velocidad = 5.0f;
+    float speed = 5.0f;
 
-    private Vector3 posicionFinal;
+    Vector3 endPos;
 
-    private Vector3 posicionInicial;
+    Vector3 initialPos;
 
-    private float tiempoTotal;
+    float totalTime;
 
-    private float tiempoTranscurrido = 0f;
+    float elapsedTime = 0f;
 
-    private bool mover = false;
+    bool move = false;
 
     void Start()
     {
-        posicionFinal = transform.position;
+        endPos = transform.position;
 
-        posicionInicial =  new Vector3(posicionFinal.x, -3.0f, posicionFinal.z);
+        initialPos =  new Vector3(endPos.x, -3.0f, endPos.z);
 
-        transform.position = posicionInicial;
+        transform.position = initialPos;
 
-        float distancia = Vector3.Distance(posicionInicial, posicionFinal);
+        float distancia = Vector3.Distance(initialPos, endPos);
 
-        tiempoTotal = distancia / velocidad;
+        totalTime = distancia / speed;
 
-        mover = true;
+        move = true;
     }
 
     void Update()
     {
-        if (mover)
+        if (move)
         {
-            tiempoTranscurrido += Time.deltaTime;
+            elapsedTime += Time.deltaTime;
 
-            float porcentaje = tiempoTranscurrido / tiempoTotal;
+            float porcentaje = elapsedTime / totalTime;
 
-            transform.position = Vector3.Lerp(posicionInicial, posicionFinal, porcentaje);
+            transform.position = Vector3.Lerp(initialPos, endPos, porcentaje);
 
-            if (tiempoTranscurrido >= tiempoTotal)
+            if (elapsedTime >= totalTime)
             {
-                transform.position = posicionFinal;
-                mover = false;
+                transform.position = endPos;
+                move = false;
             }
         }
+    }
+
+    public void Disapear()
+	{
+        initialPos = transform.position;
+
+        endPos = new Vector3(initialPos.x, -4.0f, initialPos.z);
+
+        elapsedTime = 0f;
+
+        float distancia = Vector3.Distance(initialPos, endPos);
+
+        totalTime = distancia / speed;
+
+        move = true;
     }
 }

@@ -42,22 +42,23 @@ public class TerrainManager : MonoBehaviour
     {
         DestroyPlayer();
 
-        if (level == -1)
+        foreach (Transform child in transform)
         {
-            terrainGenerator.GenerateStage();
-        }
-        else
-        {
-            if (map >= terrainLoader.numMaps)
+            TileController childScript = child.GetComponent<TileController>();
+            if (childScript != null)
             {
-                PlayerWin();
-                return;
+                childScript.Disapear();
             }
-                
-            terrainLoader.LoadStage(map++);
         }
 
-        StartCoroutine(InstantiatePlayerWithDelay(1.0f));
+        float delay = 1.0f;
+
+        if (map == 0) delay = 0.0f;
+        else delay = 1.0f;
+
+        StartCoroutine(CreateMapWithDelay(delay));
+
+        StartCoroutine(InstantiatePlayerWithDelay(delay+1.0f));
     }
 
     public void PlayerDie()
@@ -82,9 +83,33 @@ public class TerrainManager : MonoBehaviour
         SceneManager.LoadScene("MainMenu");
     }
 
+    IEnumerator CreateMapWithDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        if (level == -1)
+        {
+            terrainGenerator.GenerateStage();
+        }
+        else
+        {
+            if (map >= terrainLoader.numMaps)
+            {
+                PlayerWin();
+            }
+            else
+            {
+                terrainLoader.LoadStage(map);
+            }
+        }
+
+        map++;
+    }
+
     IEnumerator InstantiatePlayerWithDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
+
         InstantiatePlayer();
     }
 

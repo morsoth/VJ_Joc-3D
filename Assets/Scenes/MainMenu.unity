@@ -2372,7 +2372,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 893536853}
         m_TargetAssemblyTypeName: LevelManager, Assembly-CSharp
-        m_MethodName: LoadEndelessLevel
+        m_MethodName: LoadEndlessLevel
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
