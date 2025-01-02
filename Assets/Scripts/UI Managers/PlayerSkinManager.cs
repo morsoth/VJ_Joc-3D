@@ -54,7 +54,7 @@ public class PlayerSkinManager : MonoBehaviour
     public void PreviousSkin()
     {
         currentSkinIndex = (currentSkinIndex - 1 + playerSkins.Length) % playerSkins.Length;
-
+        AudioManager.instance.PlaySFX(AudioManager.instance.buttonClickSound);
         InstanciarSkin();
         UpdateSkin();
     }
@@ -62,7 +62,7 @@ public class PlayerSkinManager : MonoBehaviour
     public void NextSkin()
     {
         currentSkinIndex = (currentSkinIndex + 1) % playerSkins.Length;
-
+        AudioManager.instance.PlaySFX(AudioManager.instance.buttonClickSound);
         InstanciarSkin();
         UpdateSkin();
     }

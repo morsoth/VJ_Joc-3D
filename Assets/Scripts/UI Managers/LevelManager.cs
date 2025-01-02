@@ -32,6 +32,7 @@ public class LevelManager : MonoBehaviour
             default:
                 throw new System.Exception("Couldn't find level " + lvl);
         }
+        AudioManager.instance.PlaySFX(AudioManager.instance.buttonClickSound);
     }
 
     public void LoadEndlessLevel()

@@ -4715,8 +4715,8 @@ MonoBehaviour:
   sfxSource: {fileID: 645799119}
   sfxVolume: 0.5
   musicTrack: {fileID: 8300000, guid: ab75a2573b6c04643be04c91c72e77ba, type: 3}
-  buttonClickSound: {fileID: 0}
-  coinSound: {fileID: 0}
+  buttonClickSound: {fileID: 8300000, guid: 0a02246c3caa1194bbd544024f55c702, type: 3}
+  coinSound: {fileID: 8300000, guid: 2e121ba5b608c6a47b41f716503d4129, type: 3}
   jumpSound: {fileID: 0}
   fallSound: {fileID: 0}
   deathSound: {fileID: 0}

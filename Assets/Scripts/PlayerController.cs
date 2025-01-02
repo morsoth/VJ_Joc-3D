@@ -86,6 +86,7 @@ public class PlayerController : MonoBehaviour
     {
         if ((Input.GetKey(KeyCode.Space) || Input.GetMouseButton(0)) && isGrounded) {
             Jump();
+            AudioManager.instance.PlaySFX(AudioManager.instance.jumpSound);
         }
     }
 
@@ -95,7 +96,6 @@ public class PlayerController : MonoBehaviour
         rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         isGrounded = false;
         animator.SetTrigger("Jump");
-
     }
 
     float GetDistanceXZ(Transform t1, Transform t2)
@@ -144,6 +144,7 @@ public class PlayerController : MonoBehaviour
     void Die()
     {
         terrainManager.PlayerDie();
+        AudioManager.instance.PlaySFX(AudioManager.instance.deathSound);
     }
 
     void OnCollisionEnter(Collision collision)
@@ -166,6 +167,7 @@ public class PlayerController : MonoBehaviour
         else if (collider.gameObject.CompareTag("Coin"))
         {
             terrainManager.AddCoin();
+            AudioManager.instance.PlaySFX(AudioManager.instance.coinSound);
             Destroy(collider.gameObject);
         }
     }

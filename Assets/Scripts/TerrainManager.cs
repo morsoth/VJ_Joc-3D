@@ -163,7 +163,14 @@ public class TerrainManager : MonoBehaviour
         CameraShake cameraShake = Camera.main.GetComponent<CameraShake>();
         if (cameraShake != null) cameraShake.Shake(0.25f, 0.25f);
 
-        AudioManager.instance.PlaySFX(AudioManager.instance.deathSound);
+        if (AudioManager.instance != null)
+        {   
+            AudioManager.instance.PlaySFX(AudioManager.instance.deathSound);
+        }
+        else
+        {
+            Debug.LogWarning("AudioManager instance is null");
+        }
 
         stage = 0;
 
