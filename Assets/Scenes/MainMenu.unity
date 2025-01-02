@@ -1149,6 +1149,7 @@ GameObject:
   - component: {fileID: 893536853}
   - component: {fileID: 893536854}
   - component: {fileID: 893536855}
+  - component: {fileID: 893536856}
   m_Layer: 0
   m_Name: SceneManager
   m_TagString: Untagged
@@ -1211,6 +1212,19 @@ MonoBehaviour:
   percentageTextLevel1: {fileID: 1212285993}
   percentageTextLevel2: {fileID: 1186293700}
   stagesTextEndlessLevel: {fileID: 884993336}
+--- !u!114 &893536856
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 893536850}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c5051428e5140d4a9e361fee4a0e774, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  resetPlayerPrefs: 0
 --- !u!1 &938242083
 GameObject:
   m_ObjectHideFlags: 0

@@ -146,9 +146,9 @@ public class TerrainManager : MonoBehaviour
         else
         {
             int maxStages = PlayerPrefs.GetInt("ProgressEndlessLevel");
-            if (stage > maxStages)
+            if (stage-1 > maxStages)
             {
-                PlayerPrefs.SetInt("ProgressEndlessLevel", stage);
+                PlayerPrefs.SetInt("ProgressEndlessLevel", stage-1);
                 PlayerPrefs.Save();
             }
         }
