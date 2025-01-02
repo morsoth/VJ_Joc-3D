@@ -110,6 +110,8 @@ public class TerrainGenerator : MonoBehaviour
                 currentTile.x = 0;
                 currentTile.y = ROWS - 3;
 
+                CreatePathPoint(currentTile.x, currentTile.y);
+
                 numTiles = 0;
 
                 for (int i = 0; i < ROWS; ++i)

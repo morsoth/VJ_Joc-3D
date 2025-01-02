@@ -16,11 +16,13 @@ public class CoinsManager : MonoBehaviour
         else
         {
             coins = 0;
+            PlayerPrefs.SetInt("PlayerCoins", coins);
+            PlayerPrefs.Save();
         }
 
         if (coinsText != null)
         {
-            coinsText.text = "" + coins;
+            coinsText.text = coins + "  <sprite name=\"coin\">";
         }
     }
 }

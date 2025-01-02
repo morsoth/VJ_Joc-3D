@@ -1,6 +1,5 @@
 using UnityEngine;
 using TMPro;
-using UnityEngine.UI;
 
 public class PlayerSkinManager : MonoBehaviour
 {
@@ -8,7 +7,6 @@ public class PlayerSkinManager : MonoBehaviour
     public string[] skinNames;
 
     public TextMeshProUGUI skinNameText;
-    public Button buySkinButton;
 
     public GameObject currentSkin;
     int currentSkinIndex = 0;

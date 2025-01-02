@@ -13,11 +13,14 @@ public class PlayerController : MonoBehaviour
     public TerrainManager terrainManager;
 
     int index = 0;
+    [SerializeField] float totalPathDistance;
+    [SerializeField] float distanceTraveled;
+
+    float traveledPathPercentage;
+
     Rigidbody rb;
     Animator animator;
     bool isGrounded = true;
-
-    public int coins;
 
     void Start()
     {
@@ -37,7 +40,9 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        coins = PlayerPrefs.GetInt("PlayerCoins");
+        traveledPathPercentage = 0f;
+        distanceTraveled = 0f;
+        totalPathDistance = CalculateTotalPathDistance();
     }
 
     void FixedUpdate()
@@ -63,7 +68,16 @@ public class PlayerController : MonoBehaviour
             transform.rotation = targetRotation;
         }
 
-        if (GetDistanceToPointXZ(point) < 0.001f) index++;
+        if (GetDistanceToPointXZ(point) < 0.001f)
+        {
+            index++;
+        }
+
+        distanceTraveled = CalculateDistanceTraveled();
+        traveledPathPercentage = (distanceTraveled / totalPathDistance) * 100f;
+        traveledPathPercentage = Mathf.Clamp(traveledPathPercentage, 0f, 100f);
+
+        terrainManager.UpdatePercentage(traveledPathPercentage);
 
         rb.AddForce(Vector3.down * gravity, ForceMode.Acceleration);
     }
@@ -72,16 +86,6 @@ public class PlayerController : MonoBehaviour
     {
         if ((Input.GetKey(KeyCode.Space) || Input.GetMouseButton(0)) && isGrounded) {
             Jump();
-        }
-
-        if (Input.GetKeyDown(KeyCode.N))
-        {
-            terrainManager.NextStage();
-        }
-
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            SceneManager.LoadScene("MainMenu");
         }
     }
 
@@ -94,6 +98,13 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    float GetDistanceXZ(Transform t1, Transform t2)
+    {
+        float distance = Mathf.Sqrt(Mathf.Pow(t1.position.x - t2.position.x, 2) + Mathf.Pow(t1.position.z - t2.position.z, 2));
+
+        return distance;
+    }
+
     float GetDistanceToPointXZ(Transform point)
 	{
         float distance = Mathf.Sqrt(Mathf.Pow(transform.position.x - point.position.x, 2) + Mathf.Pow(transform.position.z - point.position.z, 2));
@@ -101,11 +112,33 @@ public class PlayerController : MonoBehaviour
         return distance;
 	}
 
-    void AddCoin()
-	{
-        coins++;
-        PlayerPrefs.SetInt("PlayerCoins", coins);
-        PlayerPrefs.Save();
+    float CalculateTotalPathDistance()
+    {
+        float totalDistance = 0f;
+
+        for (int i = 0; i < path.childCount - 1; i++)
+        {
+            totalDistance += GetDistanceXZ(path.GetChild(i), path.GetChild(i + 1));
+        }
+
+        return totalDistance;
+    }
+
+    float CalculateDistanceTraveled()
+    {
+        float traveled = 0f;
+
+        for (int i = 0; i < index - 1; i++)
+        {
+            traveled += GetDistanceXZ(path.GetChild(i), path.GetChild(i + 1));
+        }
+        
+        if (index < path.childCount)
+        {
+            traveled += GetDistanceXZ(transform, path.GetChild(index - 1));
+        }
+        
+        return traveled;
     }
 
     void Die()
@@ -132,7 +165,7 @@ public class PlayerController : MonoBehaviour
         }
         else if (collider.gameObject.CompareTag("Coin"))
         {
-            AddCoin();
+            terrainManager.AddCoin();
             Destroy(collider.gameObject);
         }
     }

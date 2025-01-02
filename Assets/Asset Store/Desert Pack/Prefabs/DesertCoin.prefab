@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 4913650622769220}
   - component: {fileID: 33103364239260460}
   - component: {fileID: 23972230991919888}
-  - component: {fileID: 114101145108299534}
   m_Layer: 0
   m_Name: DesertCoin
   m_TagString: Untagged
@@ -87,17 +86,3 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &114101145108299534
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1779210579782098}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b91f65c71b95e14589aad91b5b7b8ce, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  direction: {x: 0, y: 1, z: 0}
-  speed: 100

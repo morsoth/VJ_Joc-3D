@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public enum Direction { LEFT, RIGHT, UP, DOWN }
 public enum Tile { VOID, HORIZONTAL, VERTICAL, LEFT_UP, LEFT_DOWN, RIGHT_UP, RIGHT_DOWN, CROSS }
@@ -29,18 +29,50 @@ public class TerrainManager : MonoBehaviour
 
     GameObject player;
 
-    int map;
+    [Header("UI")]
+    public TextMeshProUGUI stageText;
+    int stage;
+
+    public TextMeshProUGUI percentageText;
+    int percentage;
+
+    public TextMeshProUGUI coinsText;
+    int coins;
 
     void Start()
     {
-        map = 0;
+        stage = 0;
+
+        percentage = 0;
+        if (percentageText != null)
+        {
+            percentageText.text = percentage + "%";
+        }
+
+        coins = PlayerPrefs.GetInt("PlayerCoins");
+        if (coinsText != null)
+        {
+            coinsText.text = coins + "  <sprite name=\"coin\">";
+        }
+
 
         NextStage();
     }
 
-    public void NextStage()
+	void Update()
+	{
+		if (Input.GetKey(KeyCode.Escape) || Input.GetKey(KeyCode.Q))
+		{
+            UpdateProgress();
+            SceneManager.LoadScene("MainMenu");
+        }
+	}
+
+	public void NextStage()
     {
         DestroyPlayer();
+
+        UpdateProgress();
 
         foreach (Transform child in transform)
         {
@@ -53,7 +85,7 @@ public class TerrainManager : MonoBehaviour
 
         float delay = 1.0f;
 
-        if (map == 0) delay = 0.0f;
+        if (stage == 0) delay = 0.0f;
         else delay = 1.0f;
 
         StartCoroutine(CreateMapWithDelay(delay));
@@ -61,9 +93,73 @@ public class TerrainManager : MonoBehaviour
         StartCoroutine(InstantiatePlayerWithDelay(delay+1.0f));
     }
 
-    public void PlayerDie()
+    public void AddCoin()
+    {
+        coins++;
+
+        if (coinsText != null)
+        {
+            coinsText.text = coins + "  <sprite name=\"coin\">";
+        }
+
+        PlayerPrefs.SetInt("PlayerCoins", coins);
+        PlayerPrefs.Save();
+    }
+
+    public void UpdatePercentage(float stagePercentage)
 	{
+        if (level != -1)
+        {
+            float decimalPercentage = (stage - 1) * (100f / terrainLoader.numMaps);
+
+            decimalPercentage += (stagePercentage / terrainLoader.numMaps);
+
+            percentage = (int)decimalPercentage;
+
+            if (percentageText != null)
+            {
+                percentageText.text = percentage + "%";
+            }
+        }
+    }
+
+    void UpdateProgress()
+	{
+        if (level == 1)
+        {
+            int maxPercentage = PlayerPrefs.GetInt("ProgressLevel1");
+            if (percentage > maxPercentage)
+            {
+                PlayerPrefs.SetInt("ProgressLevel1", percentage);
+                PlayerPrefs.Save();
+            }
+        }
+        else if (level == 2)
+        {
+            int maxPercentage = PlayerPrefs.GetInt("ProgressLevel2");
+            if (percentage > maxPercentage)
+            {
+                PlayerPrefs.SetInt("ProgressLevel2", percentage);
+                PlayerPrefs.Save();
+            }
+        }
+        else
+        {
+            int maxStages = PlayerPrefs.GetInt("ProgressEndlessLevel");
+            if (stage > maxStages)
+            {
+                PlayerPrefs.SetInt("ProgressEndlessLevel", stage);
+                PlayerPrefs.Save();
+            }
+        }
+    }
+
+    public void PlayerDie()
+    {
         Debug.Log("YOU DIED");
+
+        UpdateProgress();
+
         if (level == 1)
         {
             SceneManager.LoadScene("level01");
@@ -72,7 +168,8 @@ public class TerrainManager : MonoBehaviour
         {
             SceneManager.LoadScene("level02");
         }
-        else {
+        else
+        {
             SceneManager.LoadScene("EndlessLevel");
         }
     }
@@ -93,17 +190,22 @@ public class TerrainManager : MonoBehaviour
         }
         else
         {
-            if (map >= terrainLoader.numMaps)
+            if (stage >= terrainLoader.numMaps)
             {
                 PlayerWin();
             }
             else
             {
-                terrainLoader.LoadStage(map);
+                terrainLoader.LoadStage(stage);
             }
         }
 
-        map++;
+        stage++;
+
+        if (stageText != null)
+        {
+            stageText.text = "Stage: " + stage;
+        }
     }
 
     IEnumerator InstantiatePlayerWithDelay(float delay)

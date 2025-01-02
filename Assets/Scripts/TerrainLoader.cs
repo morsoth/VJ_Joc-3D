@@ -155,6 +155,8 @@ public class TerrainLoader : MonoBehaviour
 
         direction = Direction.RIGHT;
 
+        CreatePathPoint(currentTile.x, currentTile.y);
+
         while (IsWithinBounds(currentTile.x, currentTile.y))
         {
             Tile tile = tileMap[currentTile.y, currentTile.x];

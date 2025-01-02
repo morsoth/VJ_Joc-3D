@@ -36,30 +36,51 @@ MonoBehaviour:
     m_StrikethroughThickness: 0
     m_TabWidth: 0
   m_Material: {fileID: 8235712831096571710}
-  spriteSheet: {fileID: 2800000, guid: b7fa8cee40545c544a336d6f7d469a10, type: 3}
+  spriteSheet: {fileID: 2800000, guid: 76427018b2218b04faeece9d65bbd755, type: 3}
   m_SpriteCharacterTable:
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 0
     m_Scale: 1
     m_Name: coin
+  - m_ElementType: 2
+    m_Unicode: 65534
+    m_GlyphIndex: 1
+    m_Scale: 1
+    m_Name: infinite
   m_GlyphTable:
   - m_Index: 0
     m_Metrics:
       m_Width: 437
       m_Height: 487
-      m_HorizontalBearingX: 100
-      m_HorizontalBearingY: 460
+      m_HorizontalBearingX: 0
+      m_HorizontalBearingY: 306.6
       m_HorizontalAdvance: 437
     m_GlyphRect:
       m_X: 0
       m_Y: 0
       m_Width: 437
       m_Height: 487
-    m_Scale: 0.9
+    m_Scale: 1.5
     m_AtlasIndex: 0
     m_ClassDefinitionType: 0
-    sprite: {fileID: -1452499915, guid: b7fa8cee40545c544a336d6f7d469a10, type: 3}
+    sprite: {fileID: 674204691, guid: 76427018b2218b04faeece9d65bbd755, type: 3}
+  - m_Index: 1
+    m_Metrics:
+      m_Width: 500
+      m_Height: 319
+      m_HorizontalBearingX: 0
+      m_HorizontalBearingY: 221.8
+      m_HorizontalAdvance: 500
+    m_GlyphRect:
+      m_X: 464
+      m_Y: 85
+      m_Width: 500
+      m_Height: 319
+    m_Scale: 1
+    m_AtlasIndex: 0
+    m_ClassDefinitionType: 0
+    sprite: {fileID: 1898564081, guid: 76427018b2218b04faeece9d65bbd755, type: 3}
   spriteInfoList: []
   fallbackSpriteAssets: []
 --- !u!21 &8235712831096571710
@@ -86,7 +107,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: b7fa8cee40545c544a336d6f7d469a10, type: 3}
+        m_Texture: {fileID: 2800000, guid: 76427018b2218b04faeece9d65bbd755, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
