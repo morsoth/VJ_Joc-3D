@@ -4716,11 +4716,11 @@ MonoBehaviour:
   sfxVolume: 0.5
   musicTrack: {fileID: 8300000, guid: ab75a2573b6c04643be04c91c72e77ba, type: 3}
   buttonClickSound: {fileID: 8300000, guid: 0a02246c3caa1194bbd544024f55c702, type: 3}
-  coinSound: {fileID: 8300000, guid: 2e121ba5b608c6a47b41f716503d4129, type: 3}
-  jumpSound: {fileID: 0}
+  coinSound: {fileID: 8300000, guid: ad1812582466dc042ad94ed61982ae67, type: 3}
+  jumpSound: {fileID: 8300000, guid: 1c8d5398dcfad6049ad7d41ccbcd572b, type: 3}
   fallSound: {fileID: 0}
-  deathSound: {fileID: 0}
-  terrainSound: {fileID: 0}
+  deathSound: {fileID: 8300000, guid: a0bad3f1af2300b4e800bca20c5c99e7, type: 3}
+  terrainSound: {fileID: 8300000, guid: 33ce39fb69aae074bab83981d3964d16, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
