@@ -13,6 +13,7 @@ public class PlayerSkinManager : MonoBehaviour
 
     public float rotationSpeed = 60f;
 
+
     void Start()
     {
         if (PlayerPrefs.HasKey("PlayerSkin"))
@@ -32,7 +33,20 @@ public class PlayerSkinManager : MonoBehaviour
         InstanciarSkin();
     }
 
-	void Update()
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            NextSkin();
+        }
+        else if (Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            PreviousSkin();
+        }
+        UpdateSkin();
+    }
+
+	void UpdateSkin()
 	{
         transform.Rotate(Vector3.up * rotationSpeed * Time.deltaTime);
     }
@@ -42,6 +56,7 @@ public class PlayerSkinManager : MonoBehaviour
         currentSkinIndex = (currentSkinIndex - 1 + playerSkins.Length) % playerSkins.Length;
 
         InstanciarSkin();
+        UpdateSkin();
     }
 
     public void NextSkin()
@@ -49,6 +64,7 @@ public class PlayerSkinManager : MonoBehaviour
         currentSkinIndex = (currentSkinIndex + 1) % playerSkins.Length;
 
         InstanciarSkin();
+        UpdateSkin();
     }
 
     void InstanciarSkin()
