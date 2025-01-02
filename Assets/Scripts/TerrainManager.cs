@@ -160,18 +160,20 @@ public class TerrainManager : MonoBehaviour
 
         UpdateProgress();
 
-        if (level == 1)
+        CameraShake cameraShake = Camera.main.GetComponent<CameraShake>();
+        if (cameraShake != null) cameraShake.Shake(0.25f, 0.25f);
+
+        AudioManager.instance.PlaySFX(AudioManager.instance.deathSound);
+
+        stage = 0;
+
+        percentage = 0;
+        if (percentageText != null)
         {
-            SceneManager.LoadScene("level01");
+            percentageText.text = percentage + "%";
         }
-        else if (level == 2)
-        {
-            SceneManager.LoadScene("level02");
-        }
-        else
-        {
-            SceneManager.LoadScene("EndlessLevel");
-        }
+
+        NextStage();
     }
 
     public void PlayerWin()

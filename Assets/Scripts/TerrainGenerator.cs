@@ -130,7 +130,7 @@ public class TerrainGenerator : MonoBehaviour
                 }
 
                 if (currentTile.x != COLS - marginTiles) throw new System.Exception("Path doesn't end correctly");
-                if (currentTile.y < ROWS - 5 || currentTile.y > ROWS - 1) throw new System.Exception("Path doesn't end correctly");
+                //if (currentTile.y < ROWS - 5 || currentTile.y > ROWS - 1) throw new System.Exception("Path doesn't end correctly");
 
                 for (int i = 0; i < marginTiles; ++i) PlaceTile(Tile.HORIZONTAL);
 
@@ -138,9 +138,9 @@ public class TerrainGenerator : MonoBehaviour
 
                 isValidMap = true;
             }
-            catch (System.Exception e)
+            catch
 			{
-                //Debug.Log("Exception: " + e.Message);
+
             }
         }
     }

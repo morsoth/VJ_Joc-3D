@@ -943,6 +943,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 198515554}
     m_Modifications:
     - target: {fileID: 2558855081821253587, guid: 6e3bb77eecefb344ea025b27647d96c3, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2558855081821253587, guid: 6e3bb77eecefb344ea025b27647d96c3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 10
       objectReference: {fileID: 0}
@@ -985,6 +989,10 @@ PrefabInstance:
     - target: {fileID: 5507530196021947654, guid: 6e3bb77eecefb344ea025b27647d96c3, type: 3}
       propertyPath: m_Name
       value: Horizontal_Dark_Desert
+      objectReference: {fileID: 0}
+    - target: {fileID: 5507530196021947654, guid: 6e3bb77eecefb344ea025b27647d96c3, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 6251229644356024129, guid: 6e3bb77eecefb344ea025b27647d96c3, type: 3}
@@ -1910,6 +1918,7 @@ GameObject:
   - component: {fileID: 2033674981}
   - component: {fileID: 2033674980}
   - component: {fileID: 2033674983}
+  - component: {fileID: 2033674984}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -2035,6 +2044,18 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
+--- !u!114 &2033674984
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2033674979}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23ddbe7470247204b95cceb26679215d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2043566804
 GameObject:
   m_ObjectHideFlags: 0
