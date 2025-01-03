@@ -1661,7 +1661,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &969493607
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3870,7 +3870,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: VJ 3D - Q1 2024-25
+  m_text: VJ 3D - Q1  2024-25
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: c0c7a223a443a474fa999496ff4fb029, type: 2}
   m_sharedMaterial: {fileID: 4362533722999562804, guid: c0c7a223a443a474fa999496ff4fb029, type: 2}

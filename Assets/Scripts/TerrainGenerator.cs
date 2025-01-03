@@ -41,7 +41,7 @@ public class TerrainGenerator : MonoBehaviour
     const int ROWS = 8;
     const int COLS = 20;
 
-    int marginTiles = 2;
+    int marginTiles = 3;
 
     Vector2Int currentTile;
 
