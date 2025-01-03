@@ -167,7 +167,6 @@ public class PlayerController : MonoBehaviour
         else if (collider.gameObject.CompareTag("Coin"))
         {
             terrainManager.AddCoin();
-            AudioManager.instance.PlaySFX(AudioManager.instance.coinSound);
             Destroy(collider.gameObject);
         }
     }

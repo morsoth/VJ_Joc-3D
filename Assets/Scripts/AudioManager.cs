@@ -19,6 +19,7 @@ public class AudioManager : MonoBehaviour
     public AudioClip fallSound;
     public AudioClip deathSound;
     public AudioClip terrainSound;
+    public AudioClip winSound;
 
     public static AudioManager instance;
 

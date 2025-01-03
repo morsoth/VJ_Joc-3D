@@ -97,6 +97,8 @@ public class TerrainManager : MonoBehaviour
     {
         coins++;
 
+        AudioManager.instance.PlaySFX(AudioManager.instance.coinSound);
+
         if (coinsText != null)
         {
             coinsText.text = coins + "  <sprite name=\"coin\">";
@@ -156,21 +158,12 @@ public class TerrainManager : MonoBehaviour
 
     public void PlayerDie()
     {
-        Debug.Log("YOU DIED");
-
         UpdateProgress();
 
         CameraShake cameraShake = Camera.main.GetComponent<CameraShake>();
         if (cameraShake != null) cameraShake.Shake(0.25f, 0.25f);
 
-        if (AudioManager.instance != null)
-        {   
-            AudioManager.instance.PlaySFX(AudioManager.instance.deathSound);
-        }
-        else
-        {
-            Debug.LogWarning("AudioManager instance is null");
-        }
+        AudioManager.instance.PlaySFX(AudioManager.instance.deathSound);
 
         stage = 0;
 

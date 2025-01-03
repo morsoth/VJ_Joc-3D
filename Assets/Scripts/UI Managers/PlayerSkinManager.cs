@@ -43,6 +43,7 @@ public class PlayerSkinManager : MonoBehaviour
         {
             PreviousSkin();
         }
+
         UpdateSkin();
     }
 
@@ -53,16 +54,16 @@ public class PlayerSkinManager : MonoBehaviour
 
     public void PreviousSkin()
     {
-        currentSkinIndex = (currentSkinIndex - 1 + playerSkins.Length) % playerSkins.Length;
         AudioManager.instance.PlaySFX(AudioManager.instance.buttonClickSound);
+        currentSkinIndex = (currentSkinIndex - 1 + playerSkins.Length) % playerSkins.Length;
         InstanciarSkin();
         UpdateSkin();
     }
 
     public void NextSkin()
     {
-        currentSkinIndex = (currentSkinIndex + 1) % playerSkins.Length;
         AudioManager.instance.PlaySFX(AudioManager.instance.buttonClickSound);
+        currentSkinIndex = (currentSkinIndex + 1) % playerSkins.Length;
         InstanciarSkin();
         UpdateSkin();
     }

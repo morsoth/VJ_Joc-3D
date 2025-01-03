@@ -16,12 +16,10 @@ public class CreditsManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.C))
         {
             ShowCredits();
-            AudioManager.instance.PlaySFX(AudioManager.instance.buttonClickSound);
         }
         else if (Input.GetKeyDown(KeyCode.Q))
         {
             HideCredits();
-            AudioManager.instance.PlaySFX(AudioManager.instance.buttonClickSound);
         }
         
     }
@@ -29,10 +27,12 @@ public class CreditsManager : MonoBehaviour
     public void ShowCredits()
     {
         panel.SetActive(true);
+        AudioManager.instance.PlaySFX(AudioManager.instance.buttonClickSound);
     }
 
     public void HideCredits()
     {
         panel.SetActive(false);
+        AudioManager.instance.PlaySFX(AudioManager.instance.buttonClickSound);
     }
 }
